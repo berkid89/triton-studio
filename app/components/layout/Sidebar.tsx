@@ -5,6 +5,8 @@ import {
   Settings,
   Menu,
   X,
+  Users,
+  FileText,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -16,6 +18,8 @@ interface NavItem {
 
 const navigation: NavItem[] = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Users", href: "/users", icon: Users },
+  { name: "Forms", href: "/forms", icon: FileText },
   { name: "Profile", href: "/profile", icon: User },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
@@ -49,7 +53,7 @@ export function Sidebar() {
         <div className="h-full px-3 py-4 overflow-y-auto">
           <div className="mb-8 mt-12 lg:mt-4">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              TailAdmin
+              Triton Studio
             </h1>
           </div>
           <nav className="space-y-2">
