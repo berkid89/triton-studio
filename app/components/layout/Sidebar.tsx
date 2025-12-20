@@ -46,11 +46,15 @@ export function Sidebar() {
           mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800`}
       >
-        <div className="h-full px-3 py-4 overflow-y-auto">
-          <div className="mb-8 mt-12 lg:mt-4">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Triton Studio
-            </h1>
+        <div className="h-full px-3 py-2 overflow-y-auto">
+          <div className="flex justify-center lg:justify-start">
+            <Link to="/" className="flex items-center group">
+              <img 
+                src="/assets/logo.png" 
+                alt="Triton Studio" 
+                className="h-14 w-auto max-w-[180px] object-contain transition-opacity group-hover:opacity-80"
+              />
+            </Link>
           </div>
           <nav className="space-y-2">
             {navigation.map((item) => {
