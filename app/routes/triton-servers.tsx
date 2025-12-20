@@ -31,6 +31,7 @@ import {
   deleteTritonServer,
   type TritonServer,
 } from "~/lib/triton-server.server";
+import { TritonApiService } from "~/lib/triton-api.service";
 import { useFetcher, useLoaderData, useRevalidator } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -150,9 +151,18 @@ export default function TritonServers() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [editingServer, setEditingServer] = useState<TritonServer | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [serversWithStatus, setServersWithStatus] = useState<TritonServer[]>([]);
 
-  // Ensure servers is always an array
-  const serversData = React.useMemo(() => servers || [], [servers]);
+  // Initialize servers with status
+  const serversData = React.useMemo(() => {
+    if (serversWithStatus.length > 0) {
+      return serversWithStatus;
+    }
+    return (servers || []).map(server => ({
+      ...server,
+      status: (!server.metrics_url ? 'not-ready' : 'connecting') as 'connecting' | 'ready' | 'not-ready',
+    }));
+  }, [servers, serversWithStatus]);
 
   const {
     register,
@@ -190,9 +200,52 @@ export default function TritonServers() {
       reset();
       setShowForm(false);
       setEditingServer(null);
+      setServersWithStatus([]); // Reset to trigger status check on new data
       revalidator.revalidate();
     }
   }, [fetcher.data, fetcher.state, reset, revalidator]);
+
+  // Check server statuses
+  useEffect(() => {
+    const checkServerStatuses = async () => {
+      const serversFromLoader = servers || [];
+      
+      // Initialize all servers with status
+      const initialServers = serversFromLoader.map(server => ({
+        ...server,
+        status: (!server.metrics_url ? 'not-ready' : 'connecting') as 'connecting' | 'ready' | 'not-ready',
+      }));
+      setServersWithStatus(initialServers);
+
+      // Check status for each server that has a metrics_url
+      const statusChecks = serversFromLoader
+        .filter(server => server.metrics_url)
+        .map(async (server) => {
+          try {
+            const apiService = new TritonApiService(server, true); // Use proxy to bypass CORS
+            const isReady = await apiService.checkHealthReady();
+            return {
+              id: server.id,
+              status: isReady ? 'ready' as const : 'not-ready' as const,
+            };
+          } catch (error) {
+            return {
+              id: server.id,
+              status: 'not-ready' as const,
+            };
+          }
+        });
+
+      const results = await Promise.all(statusChecks);
+      const updatedServers = initialServers.map(server => {
+        const result = results.find(r => r.id === server.id);
+        return result ? { ...server, status: result.status } : server;
+      });
+      setServersWithStatus(updatedServers);
+    };
+
+    checkServerStatuses();
+  }, [servers]);
 
   const handleEdit = (server: TritonServer) => {
     setEditingServer(server);
@@ -222,6 +275,50 @@ export default function TritonServers() {
     {
       accessorKey: "id",
       header: "ID",
+    },
+    {
+      id: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const server = row.original;
+        const status = server.status || 'connecting';
+        
+        const getStatusColor = () => {
+          switch (status) {
+            case 'ready':
+              return 'bg-green-500';
+            case 'not-ready':
+              return 'bg-red-500';
+            case 'connecting':
+            default:
+              return 'bg-orange-500';
+          }
+        };
+
+        const getStatusLabel = () => {
+          switch (status) {
+            case 'ready':
+              return 'Ready';
+            case 'not-ready':
+              return 'Not Ready';
+            case 'connecting':
+            default:
+              return 'Connecting';
+          }
+        };
+
+        return (
+          <div className="flex items-center gap-2">
+            <div
+              className={`w-3 h-3 rounded-full ${getStatusColor()}`}
+              title={getStatusLabel()}
+            />
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              {getStatusLabel()}
+            </span>
+          </div>
+        );
+      },
     },
     {
       accessorKey: "name",

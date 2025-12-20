@@ -6,6 +6,7 @@ export type TritonServer = {
   grpc_inference_url?: string | null;
   http_url?: string | null;
   metrics_url?: string | null;
+  status?: 'connecting' | 'ready' | 'not-ready';
   created_at?: string;
   updated_at?: string;
 };
