@@ -4,8 +4,8 @@ import { Bell, Shield, Globe, Palette } from "lucide-react";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Settings - TailAdmin" },
-    { name: "description", content: "Application Settings" },
+    { title: "Settings - Triton Studio" },
+    { name: "description", content: "Triton Studio Settings" },
   ];
 }
 

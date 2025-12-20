@@ -1,12 +1,10 @@
 import { Link, useLocation } from "react-router";
 import {
   LayoutDashboard,
-  User,
   Settings,
   Menu,
   X,
-  Users,
-  FileText,
+  Server
 } from "lucide-react";
 import { useState } from "react";
 
@@ -18,9 +16,7 @@ interface NavItem {
 
 const navigation: NavItem[] = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Users", href: "/users", icon: Users },
-  { name: "Forms", href: "/forms", icon: FileText },
-  { name: "Profile", href: "/profile", icon: User },
+  { name: "Triton Servers", href: "/triton-servers", icon: Server },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 

@@ -65,8 +65,8 @@ const chartData = [
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Dashboard - TailAdmin" },
-    { name: "description", content: "Admin Dashboard" },
+    { title: "Dashboard - Triton Studio" },
+    { name: "description", content: "Triton Studio Dashboard" },
   ];
 }
 

@@ -45,8 +45,8 @@ type ServerFormData = z.infer<typeof serverSchema>;
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Triton Servers | Triton Studio" },
-    { name: "description", content: "Triton Server Management" },
+    { title: "Triton Servers - Triton Studio" },
+    { name: "description", content: "Triton Studio Triton Server Management" },
   ];
 }
 
