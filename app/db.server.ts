@@ -11,7 +11,9 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS triton_servers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    url TEXT NOT NULL,
+    grpc_inference_url TEXT,
+    http_url TEXT,
+    metrics_url TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )

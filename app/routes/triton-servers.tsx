@@ -38,7 +38,18 @@ import * as z from "zod";
 
 const serverSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  url: z.url("Must be a valid URL"),
+  grpc_inference_url: z
+    .url("Must be a valid URL")
+    .optional()
+    .or(z.literal("")),
+  http_url: z
+    .url("Must be a valid URL")
+    .optional()
+    .or(z.literal("")),
+  metrics_url: z
+    .url("Must be a valid URL")
+    .optional()
+    .or(z.literal("")),
 });
 
 type ServerFormData = z.infer<typeof serverSchema>;
@@ -61,11 +72,23 @@ export async function action({ request }: Route.ActionArgs) {
 
   if (intent === "create") {
     const name = formData.get("name") as string;
-    const url = formData.get("url") as string;
+    const grpc_inference_url = formData.get("grpc_inference_url") as string;
+    const http_url = formData.get("http_url") as string;
+    const metrics_url = formData.get("metrics_url") as string;
 
     try {
-      serverSchema.parse({ name, url });
-      const server = createTritonServer({ name, url });
+      serverSchema.parse({ 
+        name, 
+        grpc_inference_url: grpc_inference_url || undefined,
+        http_url: http_url || undefined,
+        metrics_url: metrics_url || undefined,
+      });
+      const server = createTritonServer({ 
+        name, 
+        grpc_inference_url: grpc_inference_url || undefined,
+        http_url: http_url || undefined,
+        metrics_url: metrics_url || undefined,
+      });
       return { success: true, server, message: "Server created successfully" };
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -78,11 +101,23 @@ export async function action({ request }: Route.ActionArgs) {
   if (intent === "update") {
     const id = parseInt(formData.get("id") as string);
     const name = formData.get("name") as string;
-    const url = formData.get("url") as string;
+    const grpc_inference_url = formData.get("grpc_inference_url") as string;
+    const http_url = formData.get("http_url") as string;
+    const metrics_url = formData.get("metrics_url") as string;
 
     try {
-      serverSchema.parse({ name, url });
-      const server = updateTritonServer(id, { name, url });
+      serverSchema.parse({ 
+        name, 
+        grpc_inference_url: grpc_inference_url || undefined,
+        http_url: http_url || undefined,
+        metrics_url: metrics_url || undefined,
+      });
+      const server = updateTritonServer(id, { 
+        name, 
+        grpc_inference_url: grpc_inference_url || undefined,
+        http_url: http_url || undefined,
+        metrics_url: metrics_url || undefined,
+      });
       if (!server) {
         return { success: false, error: "Server not found" };
       }
@@ -129,7 +164,9 @@ export default function TritonServers() {
     resolver: zodResolver(serverSchema),
     defaultValues: {
       name: "",
-      url: "",
+      grpc_inference_url: "",
+      http_url: "",
+      metrics_url: "",
     },
   });
 
@@ -137,7 +174,9 @@ export default function TritonServers() {
     const formData = new FormData();
     formData.append("intent", editingServer ? "update" : "create");
     formData.append("name", data.name);
-    formData.append("url", data.url);
+    formData.append("grpc_inference_url", data.grpc_inference_url || "");
+    formData.append("http_url", data.http_url || "");
+    formData.append("metrics_url", data.metrics_url || "");
     if (editingServer) {
       formData.append("id", editingServer.id.toString());
     }
@@ -158,7 +197,9 @@ export default function TritonServers() {
   const handleEdit = (server: TritonServer) => {
     setEditingServer(server);
     setValue("name", server.name);
-    setValue("url", server.url);
+    setValue("grpc_inference_url", server.grpc_inference_url || "");
+    setValue("http_url", server.http_url || "");
+    setValue("metrics_url", server.metrics_url || "");
     setShowForm(true);
   };
 
@@ -187,18 +228,36 @@ export default function TritonServers() {
       header: "Name",
     },
     {
-      accessorKey: "url",
-      header: "URL",
-      cell: ({ row }) => (
-        <a
-          href={row.getValue("url")}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 hover:underline dark:text-blue-400"
-        >
-          {row.getValue("url")}
-        </a>
-      ),
+      id: "urls",
+      header: "Urls",
+      cell: ({ row }) => {
+        const { grpc_inference_url, http_url, metrics_url } = row.original;
+        const urls = [
+          { label: "GRPC", url: grpc_inference_url },
+          { label: "HTTP", url: http_url },
+          { label: "Metrics", url: metrics_url },
+        ].filter((item): item is { label: string; url: string } => !!item.url);
+
+        if (urls.length === 0) {
+          return <span className="text-gray-400">-</span>;
+        }
+
+        return (
+          <div className="flex flex-col gap-1">
+            {urls.map((item, index) => (
+              <a
+                key={index}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline dark:text-blue-400 text-sm"
+              >
+                {item.label}: {item.url}
+              </a>
+            ))}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "created_at",
@@ -276,30 +335,56 @@ export default function TritonServers() {
               {editingServer ? "Edit Server" : "Add New Server"}
             </h2>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  {...register("name")}
+                  placeholder="Server Name"
+                />
+                {errors.name && (
+                  <p className="text-sm text-red-600 dark:text-red-400">
+                    {errors.name.message}
+                  </p>
+                )}
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="grpc_inference_url">GRPC Inference Service URL</Label>
                   <Input
-                    id="name"
-                    {...register("name")}
-                    placeholder="Server Name"
+                    id="grpc_inference_url"
+                    {...register("grpc_inference_url")}
+                    placeholder="grpc://example.com:8001"
                   />
-                  {errors.name && (
+                  {errors.grpc_inference_url && (
                     <p className="text-sm text-red-600 dark:text-red-400">
-                      {errors.name.message}
+                      {errors.grpc_inference_url.message}
                     </p>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="url">URL</Label>
+                  <Label htmlFor="http_url">HTTP Service URL</Label>
                   <Input
-                    id="url"
-                    {...register("url")}
-                    placeholder="https://example.com"
+                    id="http_url"
+                    {...register("http_url")}
+                    placeholder="http://example.com:8000"
                   />
-                  {errors.url && (
+                  {errors.http_url && (
                     <p className="text-sm text-red-600 dark:text-red-400">
-                      {errors.url.message}
+                      {errors.http_url.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="metrics_url">Metrics Service URL</Label>
+                  <Input
+                    id="metrics_url"
+                    {...register("metrics_url")}
+                    placeholder="http://example.com:8002/metrics"
+                  />
+                  {errors.metrics_url && (
+                    <p className="text-sm text-red-600 dark:text-red-400">
+                      {errors.metrics_url.message}
                     </p>
                   )}
                 </div>
