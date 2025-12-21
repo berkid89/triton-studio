@@ -13,9 +13,9 @@ export type TritonServer = {
 
 export type CreateTritonServerInput = {
   name: string;
-  grpc_inference_url?: string;
-  http_url?: string;
-  metrics_url?: string;
+  grpc_inference_url: string;
+  http_url: string;
+  metrics_url: string;
 };
 
 export type UpdateTritonServerInput = {
@@ -34,9 +34,9 @@ export function createTritonServer(input: CreateTritonServerInput): TritonServer
   
   const result = stmt.run(
     input.name,
-    input.grpc_inference_url || null,
-    input.http_url || null,
-    input.metrics_url || null
+    input.grpc_inference_url,
+    input.http_url,
+    input.metrics_url
   );
   return getTritonServerById(result.lastInsertRowid as number)!;
 }

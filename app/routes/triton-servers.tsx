@@ -23,7 +23,7 @@ import {
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
-import { ChevronLeft, ChevronRight, Search, Plus, Edit, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, Plus, Edit, Trash2, Eye } from "lucide-react";
 import {
   getAllTritonServers,
   createTritonServer,
@@ -31,26 +31,17 @@ import {
   deleteTritonServer,
   type TritonServer,
 } from "~/lib/triton-server.server";
-import { TritonApiService } from "~/lib/triton-api.service";
-import { useFetcher, useLoaderData, useRevalidator } from "react-router";
+import { useFetcher, useLoaderData, useRevalidator, Link } from "react-router";
+import { getStatusColor, getStatusLabel, getInitialServerStatus, checkServerStatus, getServerUrls, formatDate } from "~/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
 const serverSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  grpc_inference_url: z
-    .url("Must be a valid URL")
-    .optional()
-    .or(z.literal("")),
-  http_url: z
-    .url("Must be a valid URL")
-    .optional()
-    .or(z.literal("")),
-  metrics_url: z
-    .url("Must be a valid URL")
-    .optional()
-    .or(z.literal("")),
+  grpc_inference_url: z.string().url("Must be a valid URL").min(1, "GRPC Service URL is required"),
+  http_url: z.string().url("Must be a valid URL").min(1, "HTTP Service URL is required"),
+  metrics_url: z.string().url("Must be a valid URL").min(1, "Metrics Service URL is required"),
 });
 
 type ServerFormData = z.infer<typeof serverSchema>;
@@ -80,15 +71,15 @@ export async function action({ request }: Route.ActionArgs) {
     try {
       serverSchema.parse({ 
         name, 
-        grpc_inference_url: grpc_inference_url || undefined,
-        http_url: http_url || undefined,
-        metrics_url: metrics_url || undefined,
+        grpc_inference_url,
+        http_url,
+        metrics_url,
       });
       const server = createTritonServer({ 
         name, 
-        grpc_inference_url: grpc_inference_url || undefined,
-        http_url: http_url || undefined,
-        metrics_url: metrics_url || undefined,
+        grpc_inference_url,
+        http_url,
+        metrics_url,
       });
       return { success: true, server, message: "Server created successfully" };
     } catch (error) {
@@ -109,15 +100,15 @@ export async function action({ request }: Route.ActionArgs) {
     try {
       serverSchema.parse({ 
         name, 
-        grpc_inference_url: grpc_inference_url || undefined,
-        http_url: http_url || undefined,
-        metrics_url: metrics_url || undefined,
+        grpc_inference_url,
+        http_url,
+        metrics_url,
       });
       const server = updateTritonServer(id, { 
         name, 
-        grpc_inference_url: grpc_inference_url || undefined,
-        http_url: http_url || undefined,
-        metrics_url: metrics_url || undefined,
+        grpc_inference_url,
+        http_url,
+        metrics_url,
       });
       if (!server) {
         return { success: false, error: "Server not found" };
@@ -160,7 +151,7 @@ export default function TritonServers() {
     }
     return (servers || []).map(server => ({
       ...server,
-      status: (!server.metrics_url ? 'not-ready' : 'connecting') as 'connecting' | 'ready' | 'not-ready',
+      status: getInitialServerStatus(!!server.metrics_url),
     }));
   }, [servers, serversWithStatus]);
 
@@ -184,9 +175,9 @@ export default function TritonServers() {
     const formData = new FormData();
     formData.append("intent", editingServer ? "update" : "create");
     formData.append("name", data.name);
-    formData.append("grpc_inference_url", data.grpc_inference_url || "");
-    formData.append("http_url", data.http_url || "");
-    formData.append("metrics_url", data.metrics_url || "");
+    formData.append("grpc_inference_url", data.grpc_inference_url);
+    formData.append("http_url", data.http_url);
+    formData.append("metrics_url", data.metrics_url);
     if (editingServer) {
       formData.append("id", editingServer.id.toString());
     }
@@ -213,7 +204,7 @@ export default function TritonServers() {
       // Initialize all servers with status
       const initialServers = serversFromLoader.map(server => ({
         ...server,
-        status: (!server.metrics_url ? 'not-ready' : 'connecting') as 'connecting' | 'ready' | 'not-ready',
+        status: getInitialServerStatus(!!server.metrics_url),
       }));
       setServersWithStatus(initialServers);
 
@@ -221,19 +212,11 @@ export default function TritonServers() {
       const statusChecks = serversFromLoader
         .filter(server => server.metrics_url)
         .map(async (server) => {
-          try {
-            const apiService = new TritonApiService(server, true); // Use proxy to bypass CORS
-            const isReady = await apiService.checkHealthReady();
-            return {
-              id: server.id,
-              status: isReady ? 'ready' as const : 'not-ready' as const,
-            };
-          } catch (error) {
-            return {
-              id: server.id,
-              status: 'not-ready' as const,
-            };
-          }
+          const status = await checkServerStatus(server, true);
+          return {
+            id: server.id,
+            status,
+          };
         });
 
       const results = await Promise.all(statusChecks);
@@ -282,39 +265,15 @@ export default function TritonServers() {
       cell: ({ row }) => {
         const server = row.original;
         const status = server.status || 'connecting';
-        
-        const getStatusColor = () => {
-          switch (status) {
-            case 'ready':
-              return 'bg-green-500';
-            case 'not-ready':
-              return 'bg-red-500';
-            case 'connecting':
-            default:
-              return 'bg-orange-500';
-          }
-        };
-
-        const getStatusLabel = () => {
-          switch (status) {
-            case 'ready':
-              return 'Ready';
-            case 'not-ready':
-              return 'Not Ready';
-            case 'connecting':
-            default:
-              return 'Connecting';
-          }
-        };
 
         return (
           <div className="flex items-center gap-2">
             <div
-              className={`w-3 h-3 rounded-full ${getStatusColor()}`}
-              title={getStatusLabel()}
+              className={`w-3 h-3 rounded-full ${getStatusColor(status)}`}
+              title={getStatusLabel(status)}
             />
             <span className="text-sm text-gray-600 dark:text-gray-400">
-              {getStatusLabel()}
+              {getStatusLabel(status)}
             </span>
           </div>
         );
@@ -328,12 +287,7 @@ export default function TritonServers() {
       id: "urls",
       header: "Urls",
       cell: ({ row }) => {
-        const { grpc_inference_url, http_url, metrics_url } = row.original;
-        const urls = [
-          { label: "GRPC", url: grpc_inference_url },
-          { label: "HTTP", url: http_url },
-          { label: "Metrics", url: metrics_url },
-        ].filter((item): item is { label: string; url: string } => !!item.url);
+        const urls = getServerUrls(row.original);
 
         if (urls.length === 0) {
           return <span className="text-gray-400">-</span>;
@@ -361,7 +315,7 @@ export default function TritonServers() {
       header: "Created At",
       cell: ({ row }) => {
         const date = row.getValue("created_at") as string;
-        return date ? new Date(date).toLocaleString() : "-";
+        return formatDate(date);
       },
     },
     {
@@ -371,10 +325,20 @@ export default function TritonServers() {
         const server = row.original;
         return (
           <div className="flex items-center gap-2">
+            <Link to={`/triton-servers/${server.id}`}>
+              <Button
+                variant="ghost"
+                size="sm"
+                title="View Details"
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
+            </Link>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => handleEdit(server)}
+              title="Edit"
             >
               <Edit className="h-4 w-4" />
             </Button>
@@ -382,6 +346,7 @@ export default function TritonServers() {
               variant="ghost"
               size="sm"
               onClick={() => handleDelete(server.id)}
+              title="Delete"
             >
               <Trash2 className="h-4 w-4 text-red-600" />
             </Button>
@@ -433,11 +398,12 @@ export default function TritonServers() {
             </h2>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name">Name <span className="text-red-600">*</span></Label>
                 <Input
                   id="name"
                   {...register("name")}
                   placeholder="Server Name"
+                  required
                 />
                 {errors.name && (
                   <p className="text-sm text-red-600 dark:text-red-400">
@@ -447,24 +413,12 @@ export default function TritonServers() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="grpc_inference_url">GRPC Inference Service URL</Label>
-                  <Input
-                    id="grpc_inference_url"
-                    {...register("grpc_inference_url")}
-                    placeholder="grpc://example.com:8001"
-                  />
-                  {errors.grpc_inference_url && (
-                    <p className="text-sm text-red-600 dark:text-red-400">
-                      {errors.grpc_inference_url.message}
-                    </p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="http_url">HTTP Service URL</Label>
+                  <Label htmlFor="http_url">HTTP Service URL <span className="text-red-600">*</span></Label>
                   <Input
                     id="http_url"
                     {...register("http_url")}
                     placeholder="http://example.com:8000"
+                    required
                   />
                   {errors.http_url && (
                     <p className="text-sm text-red-600 dark:text-red-400">
@@ -473,11 +427,26 @@ export default function TritonServers() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="metrics_url">Metrics Service URL</Label>
+                  <Label htmlFor="grpc_inference_url">GRPC Service URL <span className="text-red-600">*</span></Label>
+                  <Input
+                    id="grpc_inference_url"
+                    {...register("grpc_inference_url")}
+                    placeholder="grpc://example.com:8001"
+                    required
+                  />
+                  {errors.grpc_inference_url && (
+                    <p className="text-sm text-red-600 dark:text-red-400">
+                      {errors.grpc_inference_url.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="metrics_url">Metrics Service URL <span className="text-red-600">*</span></Label>
                   <Input
                     id="metrics_url"
                     {...register("metrics_url")}
                     placeholder="http://example.com:8002/metrics"
+                    required
                   />
                   {errors.metrics_url && (
                     <p className="text-sm text-red-600 dark:text-red-400">
