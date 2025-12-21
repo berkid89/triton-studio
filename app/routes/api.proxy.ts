@@ -3,8 +3,9 @@ import type { Route } from "./+types/api.proxy";
 /**
  * Generic proxy endpoint to bypass CORS
  * Usage: /api/proxy?url=<encoded-url>
+ * Supports both GET (via loader) and POST/PUT/DELETE (via action)
  */
-export async function loader({ request }: Route.LoaderArgs) {
+async function proxyRequest(request: Request) {
   const url = new URL(request.url);
   const targetUrl = url.searchParams.get("url");
 
@@ -20,11 +21,20 @@ export async function loader({ request }: Route.LoaderArgs) {
       return Response.json({ error: "Invalid URL protocol" }, { status: 400 });
     }
 
+    // Get request body if present
+    let body: string | undefined;
+    const contentType = request.headers.get("Content-Type");
+    if (request.method !== "GET" && request.method !== "HEAD") {
+      body = await request.text();
+    }
+
     const response = await fetch(decodedUrl, {
-      method: "GET",
+      method: request.method,
       headers: {
         "Accept": "application/json",
+        ...(contentType && { "Content-Type": contentType }),
       },
+      body: body || undefined,
     });
 
     const data = await response.text();
@@ -41,5 +51,13 @@ export async function loader({ request }: Route.LoaderArgs) {
       message: error instanceof Error ? error.message : "Unknown error"
     }, { status: 500 });
   }
+}
+
+export async function loader({ request }: Route.LoaderArgs) {
+  return proxyRequest(request);
+}
+
+export async function action({ request }: Route.ActionArgs) {
+  return proxyRequest(request);
 }
 

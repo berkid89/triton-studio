@@ -3,10 +3,10 @@ import { db } from "~/db.server";
 export type TritonServer = {
   id: number;
   name: string;
-  grpc_inference_url?: string | null;
-  http_url?: string | null;
-  metrics_url?: string | null;
-  status?: 'connecting' | 'ready' | 'not-ready';
+  grpc_inference_url: string;
+  http_url: string;
+  metrics_url: string;
+  status: 'connecting' | 'ready' | 'not-ready';
   created_at?: string;
   updated_at?: string;
 };

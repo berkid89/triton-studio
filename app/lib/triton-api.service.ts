@@ -1,4 +1,5 @@
 import type { TritonServer } from "./triton-server.server";
+import type { Model } from "~/types";
 
 export class TritonApiService {
   private server: TritonServer;
@@ -9,27 +10,29 @@ export class TritonApiService {
     this.useProxy = useProxy;
   }
 
-  private async requestMetrics(endpoint: string): Promise<Response> {
-    const baseUrl = this.server.metrics_url;
+  private async request(method: string, baseUrl: string, endpoint: string, body?: any): Promise<Response> {
     const url = `${baseUrl}${endpoint}`;
+    const bodyString = body ? JSON.stringify(body) : undefined;
     
     // Use proxy to bypass CORS if enabled
     if (this.useProxy && typeof window !== "undefined") {
       const proxyUrl = `/api/proxy?url=${encodeURIComponent(url)}`;
       return fetch(proxyUrl, {
-        method: "GET",
+        method,
         headers: {
           "Content-Type": "application/json",
         },
+        body: bodyString,
       });
     }
     
     // Direct request (server-side or if proxy disabled)
     return fetch(url, {
-      method: "GET",
+      method,
       headers: {
         "Content-Type": "application/json",
       },
+      body: bodyString,
     });
   }
 
@@ -39,7 +42,7 @@ export class TritonApiService {
    */
   async checkHealthLive(): Promise<boolean> {
     try {
-      const response = await this.requestMetrics("/health/live");
+      const response = await this.request("GET", this.server.metrics_url, "/health/live");
       return response.ok;
     } catch (error) {
       return false;
@@ -52,10 +55,25 @@ export class TritonApiService {
    */
   async checkHealthReady(): Promise<boolean> {
     try {
-      const response = await this.requestMetrics("/health/ready");
+      const response = await this.request("GET", this.server.metrics_url, "/health/ready");
       return response.ok;
     } catch (error) {
       return false;
+    }
+  }
+
+  async getModelList(): Promise<Model[]> {
+    try {
+      const response = await this.request("POST", this.server.http_url, "/v2/repository/index", {});
+      if (!response.ok) {
+        throw new Error(`Failed to fetch models: ${response.statusText}`);
+      }
+      const data = await response.json();
+      // Triton API returns { models: [...] } or just an array
+      return Array.isArray(data) ? data : (data.models || []);
+    } catch (error) {
+      console.error("Error fetching models:", error);
+      throw error;
     }
   }
 }

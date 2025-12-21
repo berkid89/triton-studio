@@ -84,3 +84,31 @@ export function getServerUrls(server: {
     .filter((item): item is { label: string; url: string } => !!item.url);
 }
 
+/**
+ * Get the color class for a model state
+ */
+export function getModelStateColor(state: string): string {
+  const upperState = state.toUpperCase();
+  if (upperState === "READY") {
+    return 'bg-green-500';
+  } else if (upperState === "UNAVAILABLE") {
+    return 'bg-red-500';
+  } else {
+    return 'bg-orange-500';
+  }
+}
+
+/**
+ * Get the label for a model state
+ */
+export function getModelStateLabel(state: string): string {
+  const upperState = state.toUpperCase();
+  if (upperState === "READY") {
+    return 'Ready';
+  } else if (upperState === "UNAVAILABLE") {
+    return 'Unavailable';
+  } else {
+    return state;
+  }
+}
+

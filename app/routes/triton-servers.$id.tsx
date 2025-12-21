@@ -2,10 +2,20 @@ import type { Route } from "./+types/triton-servers.$id";
 import { DashboardLayout } from "../components/layout/DashboardLayout";
 import { getTritonServerById, type TritonServer } from "~/lib/triton-server.server";
 import { Link, useLoaderData } from "react-router";
-import { getStatusColor, getStatusLabel, getInitialServerStatus, checkServerStatus, formatDate, type ServerStatus } from "~/lib/utils";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { getStatusColor, getStatusLabel, getInitialServerStatus, checkServerStatus, formatDate, getModelStateColor, getModelStateLabel, type ServerStatus } from "~/lib/utils";
+import { ArrowLeft, ExternalLink, Loader2 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { useEffect, useState } from "react";
+import { TritonApiService } from "~/lib/triton-api.service";
+import type { Model } from "~/types";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "~/components/ui/table";
 
 export function meta({ data }: Route.MetaArgs) {
   if (!data?.server) {
@@ -41,6 +51,9 @@ export default function TritonServerDetail() {
   const [serverStatus, setServerStatus] = useState<ServerStatus>(
     getInitialServerStatus(!!server.metrics_url)
   );
+  const [models, setModels] = useState<Model[]>([]);
+  const [modelsLoading, setModelsLoading] = useState(false);
+  const [modelsError, setModelsError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkStatus = async () => {
@@ -50,6 +63,30 @@ export default function TritonServerDetail() {
 
     checkStatus();
   }, [server]);
+
+  useEffect(() => {
+    const fetchModels = async () => {
+      if (!server.http_url || serverStatus !== 'ready') {
+        return;
+      }
+
+      setModelsLoading(true);
+      setModelsError(null);
+      
+      try {
+        const apiService = new TritonApiService(server, true);
+        const modelList = await apiService.getModelList();
+        setModels(modelList);
+      } catch (error) {
+        console.error("Failed to fetch models:", error);
+        setModelsError(error instanceof Error ? error.message : "Failed to load models");
+      } finally {
+        setModelsLoading(false);
+      }
+    };
+
+    fetchModels();
+  }, [server, serverStatus]);
 
   return (
     <DashboardLayout>
@@ -201,6 +238,79 @@ export default function TritonServerDetail() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Models List Card */}
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Models
+              </h2>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                List of models available on this server
+              </p>
+            </div>
+          </div>
+
+          {modelsLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+              <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+                Loading models...
+              </span>
+            </div>
+          ) : modelsError ? (
+            <div className="py-12 text-center">
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {modelsError}
+              </p>
+              {serverStatus !== 'ready' && (
+                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  Server must be ready to fetch models
+                </p>
+              )}
+            </div>
+          ) : models.length === 0 ? (
+            <div className="py-12 text-center">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                No models found on this server
+              </p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Version</TableHead>
+                  <TableHead>State</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {models.map((model, index) => (
+                  <TableRow key={`${model.name}-${model.version}-${index}`}>
+                    <TableCell className="font-medium text-gray-900 dark:text-white">
+                      {model.name}
+                    </TableCell>
+                    <TableCell className="text-gray-600 dark:text-gray-400">
+                      {model.version}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-4 h-4 rounded-full ${getModelStateColor(model.state)}`}
+                          title={getModelStateLabel(model.state)}
+                        />
+                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                          {getModelStateLabel(model.state)}
+                        </span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </div>
       </div>
     </DashboardLayout>
