@@ -1,5 +1,5 @@
 import type { TritonServer } from "./triton-server.server";
-import type { Model } from "~/types";
+import type { Model, ModelInfo } from "~/types";
 
 export class TritonApiService {
   private server: TritonServer;
@@ -76,5 +76,18 @@ export class TritonApiService {
       throw error;
     }
   }
-}
 
+  async getModelInfo(modelName: string): Promise<ModelInfo> {
+    try {
+      const response = await this.request("GET", this.server.http_url, `/v2/models/${modelName}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch model info: ${response.statusText}`);
+      }
+      const data = await response.json();
+      return data as ModelInfo;
+    } catch (error) {
+      console.error("Error fetching model info:", error);
+      throw error;
+    }
+  }
+}

@@ -23,7 +23,7 @@ import {
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
-import { ChevronLeft, ChevronRight, Search, Plus, Edit, Trash2, Eye } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, Plus, Edit, Trash2 } from "lucide-react";
 import {
   getAllTritonServers,
   createTritonServer,
@@ -256,8 +256,19 @@ export default function TritonServers() {
 
   const columns: ColumnDef<TritonServer>[] = [
     {
-      accessorKey: "id",
-      header: "ID",
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => {
+        const server = row.original;
+        return (
+          <Link
+            to={`/triton-servers/${server.id}`}
+            className="text-blue-600 hover:underline dark:text-blue-400 font-medium"
+          >
+            {server.name}
+          </Link>
+        );
+      },
     },
     {
       id: "status",
@@ -278,10 +289,6 @@ export default function TritonServers() {
           </div>
         );
       },
-    },
-    {
-      accessorKey: "name",
-      header: "Name",
     },
     {
       id: "urls",
@@ -325,15 +332,6 @@ export default function TritonServers() {
         const server = row.original;
         return (
           <div className="flex items-center gap-2">
-            <Link to={`/triton-servers/${server.id}`}>
-              <Button
-                variant="ghost"
-                size="sm"
-                title="View Details"
-              >
-                <Eye className="h-4 w-4" />
-              </Button>
-            </Link>
             <Button
               variant="ghost"
               size="sm"

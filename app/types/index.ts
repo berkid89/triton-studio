@@ -15,3 +15,19 @@ export interface Model {
   state: string;
 }
 
+export interface ModelInfo {
+  name: string;
+  versions: string[];
+  platform: string;
+  inputs: Array<{
+    name: string;
+    datatype: string;
+    shape: number[];
+  }>;
+  outputs: Array<{
+    name: string;
+    datatype: string;
+    shape: number[];
+  }>;
+}
+

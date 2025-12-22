@@ -17,16 +17,16 @@ import {
   TableRow,
 } from "~/components/ui/table";
 
-export function meta({ data }: Route.MetaArgs) {
-  if (!data?.server) {
+export function meta({ loaderData }: Route.MetaArgs) {
+  if (!loaderData?.server) {
     return [
       { title: "Server Not Found - Triton Studio" },
       { name: "description", content: "Triton Server not found" },
     ];
   }
   return [
-    { title: `${data.server.name} - Triton Studio` },
-    { name: "description", content: `Details for ${data.server.name}` },
+    { title: `${loaderData.server.name} - Triton Studio` },
+    { name: "description", content: `Details for ${loaderData.server.name}` },
   ];
 }
 
@@ -282,18 +282,20 @@ export default function TritonServerDetail() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead>Version</TableHead>
                   <TableHead>State</TableHead>
+                  <TableHead>Version</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {models.map((model, index) => (
                   <TableRow key={`${model.name}-${model.version}-${index}`}>
                     <TableCell className="font-medium text-gray-900 dark:text-white">
-                      {model.name}
-                    </TableCell>
-                    <TableCell className="text-gray-600 dark:text-gray-400">
-                      {model.version}
+                      <Link
+                        to={`/triton-servers/${server.id}/models/${encodeURIComponent(model.name)}`}
+                        className="text-blue-600 hover:underline dark:text-blue-400"
+                      >
+                        {model.name}
+                      </Link>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-3">
@@ -305,6 +307,9 @@ export default function TritonServerDetail() {
                           {getModelStateLabel(model.state)}
                         </span>
                       </div>
+                    </TableCell>
+                    <TableCell className="text-gray-600 dark:text-gray-400">
+                      {model.version}
                     </TableCell>
                   </TableRow>
                 ))}
