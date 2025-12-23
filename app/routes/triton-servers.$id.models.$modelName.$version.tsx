@@ -156,10 +156,10 @@ export default function ModelDetail() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-3xl font-bold text-gray-100">
                 {modelName}
               </h1>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
+              <p className="mt-2 text-gray-400">
                 Version {version} - Model Details on {server.name}
               </p>
             </div>
@@ -167,13 +167,13 @@ export default function ModelDetail() {
         </div>
 
         {/* Model Info Card */}
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+        <div className="bg-[#121212] rounded-lg shadow-sm border border-[#2a2a2a] p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              <h2 className="text-xl font-semibold text-gray-100">
                 Model Information
               </h2>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-400">
                 Detailed information about the model
               </p>
             </div>
@@ -192,24 +192,24 @@ export default function ModelDetail() {
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-              <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+              <span className="ml-2 text-sm text-gray-400">
                 Loading model info...
               </span>
             </div>
           ) : error ? (
             <div className="py-12 text-center">
-              <p className="text-sm text-red-600 dark:text-red-400">
+              <p className="text-sm text-red-400">
                 {error}
               </p>
               {serverStatus !== 'ready' && (
-                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-2 text-xs text-gray-400">
                   Server must be ready to fetch model info
                 </p>
               )}
             </div>
           ) : !modelInfo ? (
             <div className="py-12 text-center">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-400">
                 No model information available
               </p>
             </div>
@@ -218,58 +218,58 @@ export default function ModelDetail() {
               {/* Basic Model Info */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                  <h3 className="text-sm font-semibold text-gray-400 mb-3">
                     Model Name
                   </h3>
-                  <p className="text-sm text-gray-900 dark:text-white">
+                  <p className="text-sm text-gray-100">
                     {modelInfo.name}
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                  <h3 className="text-sm font-semibold text-gray-400 mb-3">
                     Version
                   </h3>
-                  <p className="text-sm text-gray-900 dark:text-white">
+                  <p className="text-sm text-gray-100">
                     {version}
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                  <h3 className="text-sm font-semibold text-gray-400 mb-3">
                     Platform
                   </h3>
-                  <p className="text-sm text-gray-900 dark:text-white">
+                  <p className="text-sm text-gray-100">
                     {modelInfo.platform}
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                  <h3 className="text-sm font-semibold text-gray-400 mb-3">
                     Backend
                   </h3>
-                  <p className="text-sm text-gray-900 dark:text-white">
+                  <p className="text-sm text-gray-100">
                     {modelInfo.backend || "N/A"}
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                  <h3 className="text-sm font-semibold text-gray-400 mb-3">
                     Runtime
                   </h3>
-                  <p className="text-sm text-gray-900 dark:text-white">
+                  <p className="text-sm text-gray-100">
                     {modelInfo.runtime || "Default"}
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                  <h3 className="text-sm font-semibold text-gray-400 mb-3">
                     Max Batch Size
                   </h3>
-                  <p className="text-sm text-gray-900 dark:text-white">
+                  <p className="text-sm text-gray-100">
                     {modelInfo.max_batch_size || 0}
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                  <h3 className="text-sm font-semibold text-gray-400 mb-3">
                     Default Model Filename
                   </h3>
-                  <p className="text-sm text-gray-900 dark:text-white">
+                  <p className="text-sm text-gray-100">
                     {modelInfo.default_model_filename || "N/A"}
                   </p>
                 </div>
@@ -277,16 +277,16 @@ export default function ModelDetail() {
 
               {/* Version Policy */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                <h3 className="text-sm font-semibold text-gray-400 mb-3">
                   Version Policy
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {modelInfo.version_policy?.all ? (
-                    <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-md text-sm font-medium">
+                    <span className="px-3 py-1 bg-[#76b900]/20 text-[#76b900] rounded-md text-sm font-medium">
                       All Versions
                     </span>
                   ) : modelInfo.version_policy?.latest ? (
-                    <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-md text-sm font-medium">
+                    <span className="px-3 py-1 bg-[#76b900]/20 text-[#76b900] rounded-md text-sm font-medium">
                       Latest {modelInfo.version_policy.latest.num_versions ? `(${modelInfo.version_policy.latest.num_versions})` : ""}
                     </span>
                   ) : modelInfo.version_policy?.specific ? (
@@ -294,14 +294,14 @@ export default function ModelDetail() {
                       {modelInfo.version_policy.specific.versions.map((version, index) => (
                         <span
                           key={index}
-                          className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-md text-sm font-medium"
+                          className="px-3 py-1 bg-purple-900/30 text-purple-300 rounded-md text-sm font-medium"
                         >
                           {version}
                         </span>
                       ))}
                     </>
                   ) : (
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                    <span className="text-sm text-gray-400">
                       No version policy specified
                     </span>
                   )}
@@ -311,10 +311,10 @@ export default function ModelDetail() {
               {/* Inputs */}
               {modelInfo.input && modelInfo.input.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                  <h3 className="text-sm font-semibold text-gray-400 mb-3">
                     Inputs
                   </h3>
-                  <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+                  <div className="border border-[#2a2a2a] rounded-lg overflow-hidden">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -330,25 +330,25 @@ export default function ModelDetail() {
                       <TableBody>
                         {modelInfo.input.map((input, index) => (
                           <TableRow key={index}>
-                            <TableCell className="font-medium text-gray-900 dark:text-white">
+                            <TableCell className="font-medium text-gray-100">
                               {input.name}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {input.data_type}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {input.format}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {input.dims ? `[${input.dims.join(", ")}]` : "[]"}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {input.is_shape_tensor ? "Yes" : "No"}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {input.allow_ragged_batch ? "Yes" : "No"}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {input.optional ? "Yes" : "No"}
                             </TableCell>
                           </TableRow>
@@ -362,10 +362,10 @@ export default function ModelDetail() {
               {/* Outputs */}
               {modelInfo.output && modelInfo.output.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                  <h3 className="text-sm font-semibold text-gray-400 mb-3">
                     Outputs
                   </h3>
-                  <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+                  <div className="border border-[#2a2a2a] rounded-lg overflow-hidden">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -379,19 +379,19 @@ export default function ModelDetail() {
                       <TableBody>
                         {modelInfo.output.map((output, index) => (
                           <TableRow key={index}>
-                            <TableCell className="font-medium text-gray-900 dark:text-white">
+                            <TableCell className="font-medium text-gray-100">
                               {output.name}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {output.data_type}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {output.dims ? `[${output.dims.join(", ")}]` : "[]"}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {output.label_filename || "N/A"}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {output.is_shape_tensor ? "Yes" : "No"}
                             </TableCell>
                           </TableRow>
@@ -405,10 +405,10 @@ export default function ModelDetail() {
               {/* Instance Groups */}
               {modelInfo.instance_group && modelInfo.instance_group.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                  <h3 className="text-sm font-semibold text-gray-400 mb-3">
                     Instance Groups
                   </h3>
-                  <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+                  <div className="border border-[#2a2a2a] rounded-lg overflow-hidden">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -424,25 +424,25 @@ export default function ModelDetail() {
                       <TableBody>
                         {modelInfo.instance_group.map((group, index) => (
                           <TableRow key={index}>
-                            <TableCell className="font-medium text-gray-900 dark:text-white">
+                            <TableCell className="font-medium text-gray-100">
                               {group.name}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {group.kind}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {group.count}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {group.gpus && group.gpus.length > 0 ? group.gpus.join(", ") : "None"}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {group.profile && group.profile.length > 0 ? group.profile.join(", ") : "N/A"}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {group.passive ? "Yes" : "No"}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {group.host_policy || "N/A"}
                             </TableCell>
                           </TableRow>
@@ -456,56 +456,56 @@ export default function ModelDetail() {
               {/* Optimization Settings */}
               {modelInfo.optimization && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                  <h3 className="text-sm font-semibold text-gray-400 mb-3">
                     Optimization Settings
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {modelInfo.optimization.priority && (
                       <div>
-                        <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                        <h4 className="text-xs font-medium text-gray-400 mb-1">
                           Priority
                         </h4>
-                        <p className="text-sm text-gray-900 dark:text-white">
+                        <p className="text-sm text-gray-100">
                           {modelInfo.optimization.priority}
                         </p>
                       </div>
                     )}
                     {modelInfo.optimization.input_pinned_memory && (
                       <div>
-                        <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                        <h4 className="text-xs font-medium text-gray-400 mb-1">
                           Input Pinned Memory
                         </h4>
-                        <p className="text-sm text-gray-900 dark:text-white">
+                        <p className="text-sm text-gray-100">
                           {modelInfo.optimization.input_pinned_memory.enable ? "Enabled" : "Disabled"}
                         </p>
                       </div>
                     )}
                     {modelInfo.optimization.output_pinned_memory && (
                       <div>
-                        <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                        <h4 className="text-xs font-medium text-gray-400 mb-1">
                           Output Pinned Memory
                         </h4>
-                        <p className="text-sm text-gray-900 dark:text-white">
+                        <p className="text-sm text-gray-100">
                           {modelInfo.optimization.output_pinned_memory.enable ? "Enabled" : "Disabled"}
                         </p>
                       </div>
                     )}
                     {modelInfo.optimization.gather_kernel_buffer_threshold !== undefined && (
                       <div>
-                        <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                        <h4 className="text-xs font-medium text-gray-400 mb-1">
                           Gather Kernel Buffer Threshold
                         </h4>
-                        <p className="text-sm text-gray-900 dark:text-white">
+                        <p className="text-sm text-gray-100">
                           {modelInfo.optimization.gather_kernel_buffer_threshold}
                         </p>
                       </div>
                     )}
                     {modelInfo.optimization.eager_batching !== undefined && (
                       <div>
-                        <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                        <h4 className="text-xs font-medium text-gray-400 mb-1">
                           Eager Batching
                         </h4>
-                        <p className="text-sm text-gray-900 dark:text-white">
+                        <p className="text-sm text-gray-100">
                           {modelInfo.optimization.eager_batching ? "Enabled" : "Disabled"}
                         </p>
                       </div>
@@ -518,25 +518,25 @@ export default function ModelDetail() {
               {((modelInfo.batch_input && modelInfo.batch_input.length > 0) || 
                 (modelInfo.batch_output && modelInfo.batch_output.length > 0)) && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                  <h3 className="text-sm font-semibold text-gray-400 mb-3">
                     Batch Processing
                   </h3>
                   {modelInfo.batch_input && modelInfo.batch_input.length > 0 && (
                     <div className="mb-4">
-                      <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
+                      <h4 className="text-xs font-medium text-gray-400 mb-2">
                         Batch Inputs
                       </h4>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                      <div className="text-sm text-gray-400">
                         {modelInfo.batch_input.length} batch input(s) configured
                       </div>
                     </div>
                   )}
                   {modelInfo.batch_output && modelInfo.batch_output.length > 0 && (
                     <div>
-                      <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
+                      <h4 className="text-xs font-medium text-gray-400 mb-2">
                         Batch Outputs
                       </h4>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                      <div className="text-sm text-gray-400">
                         {modelInfo.batch_output.length} batch output(s) configured
                       </div>
                     </div>
@@ -547,10 +547,10 @@ export default function ModelDetail() {
               {/* Parameters */}
               {modelInfo.parameters && Object.keys(modelInfo.parameters).length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                  <h3 className="text-sm font-semibold text-gray-400 mb-3">
                     Parameters
                   </h3>
-                  <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+                  <div className="border border-[#2a2a2a] rounded-lg overflow-hidden">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -561,10 +561,10 @@ export default function ModelDetail() {
                       <TableBody>
                         {Object.entries(modelInfo.parameters).map(([key, value], index) => (
                           <TableRow key={index}>
-                            <TableCell className="font-medium text-gray-900 dark:text-white">
+                            <TableCell className="font-medium text-gray-100">
                               {key}
                             </TableCell>
-                            <TableCell className="text-gray-600 dark:text-gray-400">
+                            <TableCell className="text-gray-400">
                               {value}
                             </TableCell>
                           </TableRow>
@@ -578,14 +578,14 @@ export default function ModelDetail() {
               {/* Metric Tags */}
               {modelInfo.metric_tags && Object.keys(modelInfo.metric_tags).length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                  <h3 className="text-sm font-semibold text-gray-400 mb-3">
                     Metric Tags
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {Object.entries(modelInfo.metric_tags).map(([key, value], index) => (
                       <span
                         key={index}
-                        className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-md text-sm"
+                        className="px-3 py-1 bg-[#1a1a1a] text-gray-300 rounded-md text-sm"
                       >
                         {key}: {value}
                       </span>
@@ -598,13 +598,13 @@ export default function ModelDetail() {
         </div>
 
         {/* Model Stats Card */}
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+        <div className="bg-[#121212] rounded-lg shadow-sm border border-[#2a2a2a] p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              <h2 className="text-xl font-semibold text-gray-100">
                 Model Statistics
               </h2>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-400">
                 Performance metrics and inference statistics
               </p>
             </div>
@@ -623,24 +623,24 @@ export default function ModelDetail() {
           {statsLoading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-              <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+              <span className="ml-2 text-sm text-gray-400">
                 Loading model stats...
               </span>
             </div>
           ) : statsError ? (
             <div className="py-12 text-center">
-              <p className="text-sm text-red-600 dark:text-red-400">
+              <p className="text-sm text-red-400">
                 {statsError}
               </p>
               {serverStatus !== 'ready' && (
-                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-2 text-xs text-gray-400">
                   Server must be ready to fetch model stats
                 </p>
               )}
             </div>
           ) : !modelStats ? (
             <div className="py-12 text-center">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-400">
                 No model statistics available
               </p>
             </div>
@@ -648,35 +648,35 @@ export default function ModelDetail() {
             <div className="space-y-6">
               {/* Summary Stats */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                  <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
+                <div className="bg-[#1a1a1a] rounded-lg p-4">
+                  <h3 className="text-xs font-semibold text-gray-400 mb-1">
                     Inference Count
                   </h3>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-2xl font-bold text-gray-100">
                     {modelStats.inference_count.toLocaleString()}
                   </p>
                 </div>
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                  <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
+                <div className="bg-[#1a1a1a] rounded-lg p-4">
+                  <h3 className="text-xs font-semibold text-gray-400 mb-1">
                     Execution Count
                   </h3>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-2xl font-bold text-gray-100">
                     {modelStats.execution_count.toLocaleString()}
                   </p>
                 </div>
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                  <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
+                <div className="bg-[#1a1a1a] rounded-lg p-4">
+                  <h3 className="text-xs font-semibold text-gray-400 mb-1">
                     Last Inference
                   </h3>
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  <p className="text-sm font-medium text-gray-100">
                     {formatTimestamp(modelStats.last_inference)}
                   </p>
                 </div>
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                  <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
+                <div className="bg-[#1a1a1a] rounded-lg p-4">
+                  <h3 className="text-xs font-semibold text-gray-400 mb-1">
                     Success Rate
                   </h3>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-2xl font-bold text-gray-100">
                     {modelStats.inference_stats.success.count > 0 || modelStats.inference_stats.fail.count > 0
                       ? `${((modelStats.inference_stats.success.count / (modelStats.inference_stats.success.count + modelStats.inference_stats.fail.count)) * 100).toFixed(1)}%`
                       : "N/A"}
@@ -686,10 +686,10 @@ export default function ModelDetail() {
 
               {/* Inference Stats */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                <h3 className="text-sm font-semibold text-gray-400 mb-3">
                   Inference Statistics
                 </h3>
-                <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+                <div className="border border-[#2a2a2a] rounded-lg overflow-hidden">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -701,128 +701,128 @@ export default function ModelDetail() {
                     </TableHeader>
                     <TableBody>
                       <TableRow>
-                        <TableCell className="font-medium text-gray-900 dark:text-white">
+                        <TableCell className="font-medium text-gray-100">
                           Success
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {modelStats.inference_stats.success.count.toLocaleString()}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {formatNanoseconds(modelStats.inference_stats.success.ns)}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {modelStats.inference_stats.success.count > 0
                             ? formatNanoseconds(modelStats.inference_stats.success.ns / modelStats.inference_stats.success.count)
                             : "N/A"}
                         </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell className="font-medium text-gray-900 dark:text-white">
+                        <TableCell className="font-medium text-gray-100">
                           Fail
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {modelStats.inference_stats.fail.count.toLocaleString()}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {formatNanoseconds(modelStats.inference_stats.fail.ns)}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {modelStats.inference_stats.fail.count > 0
                             ? formatNanoseconds(modelStats.inference_stats.fail.ns / modelStats.inference_stats.fail.count)
                             : "N/A"}
                         </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell className="font-medium text-gray-900 dark:text-white">
+                        <TableCell className="font-medium text-gray-100">
                           Queue
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {modelStats.inference_stats.queue.count.toLocaleString()}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {formatNanoseconds(modelStats.inference_stats.queue.ns)}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {modelStats.inference_stats.queue.count > 0
                             ? formatNanoseconds(modelStats.inference_stats.queue.ns / modelStats.inference_stats.queue.count)
                             : "N/A"}
                         </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell className="font-medium text-gray-900 dark:text-white">
+                        <TableCell className="font-medium text-gray-100">
                           Compute Input
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {modelStats.inference_stats.compute_input.count.toLocaleString()}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {formatNanoseconds(modelStats.inference_stats.compute_input.ns)}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {modelStats.inference_stats.compute_input.count > 0
                             ? formatNanoseconds(modelStats.inference_stats.compute_input.ns / modelStats.inference_stats.compute_input.count)
                             : "N/A"}
                         </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell className="font-medium text-gray-900 dark:text-white">
+                        <TableCell className="font-medium text-gray-100">
                           Compute Infer
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {modelStats.inference_stats.compute_infer.count.toLocaleString()}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {formatNanoseconds(modelStats.inference_stats.compute_infer.ns)}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {modelStats.inference_stats.compute_infer.count > 0
                             ? formatNanoseconds(modelStats.inference_stats.compute_infer.ns / modelStats.inference_stats.compute_infer.count)
                             : "N/A"}
                         </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell className="font-medium text-gray-900 dark:text-white">
+                        <TableCell className="font-medium text-gray-100">
                           Compute Output
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {modelStats.inference_stats.compute_output.count.toLocaleString()}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {formatNanoseconds(modelStats.inference_stats.compute_output.ns)}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {modelStats.inference_stats.compute_output.count > 0
                             ? formatNanoseconds(modelStats.inference_stats.compute_output.ns / modelStats.inference_stats.compute_output.count)
                             : "N/A"}
                         </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell className="font-medium text-gray-900 dark:text-white">
+                        <TableCell className="font-medium text-gray-100">
                           Cache Hit
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {modelStats.inference_stats.cache_hit.count.toLocaleString()}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {formatNanoseconds(modelStats.inference_stats.cache_hit.ns)}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {modelStats.inference_stats.cache_hit.count > 0
                             ? formatNanoseconds(modelStats.inference_stats.cache_hit.ns / modelStats.inference_stats.cache_hit.count)
                             : "N/A"}
                         </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell className="font-medium text-gray-900 dark:text-white">
+                        <TableCell className="font-medium text-gray-100">
                           Cache Miss
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {modelStats.inference_stats.cache_miss.count.toLocaleString()}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {formatNanoseconds(modelStats.inference_stats.cache_miss.ns)}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400">
+                        <TableCell className="text-gray-400">
                           {modelStats.inference_stats.cache_miss.count > 0
                             ? formatNanoseconds(modelStats.inference_stats.cache_miss.ns / modelStats.inference_stats.cache_miss.count)
                             : "N/A"}

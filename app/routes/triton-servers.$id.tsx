@@ -109,10 +109,10 @@ export default function TritonServerDetail() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-3xl font-bold text-gray-100">
                 {server.name}
               </h1>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
+              <p className="mt-2 text-gray-400">
                 Server Details
               </p>
             </div>
@@ -120,13 +120,13 @@ export default function TritonServerDetail() {
         </div>
 
         {/* Server Details Card */}
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+        <div className="bg-[#121212] rounded-lg shadow-sm border border-[#2a2a2a] p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              <h2 className="text-xl font-semibold text-gray-100">
                 Server Details
               </h2>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-400">
                 Server information and status
               </p>
             </div>
@@ -144,7 +144,7 @@ export default function TritonServerDetail() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Status */}
             <div>
-              <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+              <h3 className="text-sm font-semibold text-gray-400 mb-3">
                 Status
               </h3>
               <div className="flex items-center gap-3">
@@ -152,7 +152,7 @@ export default function TritonServerDetail() {
                   className={`w-4 h-4 rounded-full ${getStatusColor(serverStatus)}`}
                   title={getStatusLabel(serverStatus)}
                 />
-                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                <span className="text-sm font-medium text-gray-100">
                   {getStatusLabel(serverStatus)}
                 </span>
               </div>
@@ -160,42 +160,42 @@ export default function TritonServerDetail() {
 
             {/* Server Information */}
             <div>
-              <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+              <h3 className="text-sm font-semibold text-gray-400 mb-3">
                 Server Information
               </h3>
               <div className="space-y-3">
                 <div>
-                  <label className="text-xs text-gray-500 dark:text-gray-400">
+                  <label className="text-xs text-gray-400">
                     Server ID
                   </label>
-                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                  <p className="mt-1 text-sm text-gray-100">
                     {server.id}
                   </p>
                 </div>
                 <div>
-                  <label className="text-xs text-gray-500 dark:text-gray-400">
+                  <label className="text-xs text-gray-400">
                     Name
                   </label>
-                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                  <p className="mt-1 text-sm text-gray-100">
                     {server.name}
                   </p>
                 </div>
                 {server.created_at && (
                   <div>
-                    <label className="text-xs text-gray-500 dark:text-gray-400">
+                    <label className="text-xs text-gray-400">
                       Created At
                     </label>
-                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                    <p className="mt-1 text-sm text-gray-100">
                       {formatDate(server.created_at)}
                     </p>
                   </div>
                 )}
                 {server.updated_at && (
                   <div>
-                    <label className="text-xs text-gray-500 dark:text-gray-400">
+                    <label className="text-xs text-gray-400">
                       Updated At
                     </label>
-                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                    <p className="mt-1 text-sm text-gray-100">
                       {formatDate(server.updated_at)}
                     </p>
                   </div>
@@ -205,13 +205,13 @@ export default function TritonServerDetail() {
 
             {/* Service URLs */}
             <div>
-              <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+              <h3 className="text-sm font-semibold text-gray-400 mb-3">
                 Service URLs
               </h3>
               <div className="space-y-3">
                 {server.http_url && (
                   <div>
-                    <label className="text-xs text-gray-500 dark:text-gray-400">
+                    <label className="text-xs text-gray-400">
                       HTTP Service URL
                     </label>
                     <div className="mt-1 flex items-center gap-2">
@@ -219,7 +219,7 @@ export default function TritonServerDetail() {
                         href={server.http_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-blue-600 hover:underline dark:text-blue-400 truncate"
+                        className="text-sm text-[#76b900] hover:underline hover:text-[#9dd100] truncate"
                       >
                         {server.http_url}
                       </a>
@@ -229,7 +229,7 @@ export default function TritonServerDetail() {
                 )}
                 {server.grpc_inference_url && (
                   <div>
-                    <label className="text-xs text-gray-500 dark:text-gray-400">
+                    <label className="text-xs text-gray-400">
                       GRPC Service URL
                     </label>
                     <div className="mt-1 flex items-center gap-2">
@@ -237,7 +237,7 @@ export default function TritonServerDetail() {
                         href={server.grpc_inference_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-blue-600 hover:underline dark:text-blue-400 truncate"
+                        className="text-sm text-[#76b900] hover:underline hover:text-[#9dd100] truncate"
                       >
                         {server.grpc_inference_url}
                       </a>
@@ -247,7 +247,7 @@ export default function TritonServerDetail() {
                 )}
                 {server.metrics_url && (
                   <div>
-                    <label className="text-xs text-gray-500 dark:text-gray-400">
+                    <label className="text-xs text-gray-400">
                       Metrics Service URL
                     </label>
                     <div className="mt-1 flex items-center gap-2">
@@ -255,7 +255,7 @@ export default function TritonServerDetail() {
                         href={server.metrics_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-blue-600 hover:underline dark:text-blue-400 truncate"
+                        className="text-sm text-[#76b900] hover:underline hover:text-[#9dd100] truncate"
                       >
                         {server.metrics_url}
                       </a>
@@ -269,13 +269,13 @@ export default function TritonServerDetail() {
         </div>
 
         {/* Models List Card */}
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+        <div className="bg-[#121212] rounded-lg shadow-sm border border-[#2a2a2a] p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              <h2 className="text-xl font-semibold text-gray-100">
                 Models
               </h2>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-400">
                 List of models available on this server
               </p>
             </div>
@@ -294,24 +294,24 @@ export default function TritonServerDetail() {
           {modelsLoading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-              <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+              <span className="ml-2 text-sm text-gray-400">
                 Loading models...
               </span>
             </div>
           ) : modelsError ? (
             <div className="py-12 text-center">
-              <p className="text-sm text-red-600 dark:text-red-400">
+              <p className="text-sm text-red-400">
                 {modelsError}
               </p>
               {serverStatus !== 'ready' && (
-                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-2 text-xs text-gray-400">
                   Server must be ready to fetch models
                 </p>
               )}
             </div>
           ) : models.length === 0 ? (
             <div className="py-12 text-center">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-400">
                 No models found on this server
               </p>
             </div>
@@ -327,10 +327,10 @@ export default function TritonServerDetail() {
               <TableBody>
                 {models.map((model, index) => (
                   <TableRow key={`${model.name}-${model.version}-${index}`}>
-                    <TableCell className="font-medium text-gray-900 dark:text-white">
+                    <TableCell className="font-medium text-gray-100">
                       <Link
                         to={`/triton-servers/${server.id}/models/${encodeURIComponent(model.name)}/${encodeURIComponent(model.version)}`}
-                        className="text-blue-600 hover:underline dark:text-blue-400"
+                        className="text-[#76b900] hover:underline hover:text-[#9dd100]"
                       >
                         {model.name}
                       </Link>
@@ -341,12 +341,12 @@ export default function TritonServerDetail() {
                           className={`w-4 h-4 rounded-full ${getModelStateColor(model.state)}`}
                           title={getModelStateLabel(model.state)}
                         />
-                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                        <span className="text-sm font-medium text-gray-100">
                           {getModelStateLabel(model.state)}
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-gray-600 dark:text-gray-400">
+                    <TableCell className="text-gray-400">
                       {model.version}
                     </TableCell>
                   </TableRow>

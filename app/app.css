@@ -3,13 +3,19 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  
+  /* NVIDIA-style dark theme colors */
+  --color-nvidia-green: #76b900;
+  --color-nvidia-green-light: #9dd100;
+  --color-nvidia-green-dark: #5a8a00;
+  --color-dark-bg: #0a0a0a;
+  --color-dark-surface: #121212;
+  --color-dark-surface-elevated: #1a1a1a;
+  --color-dark-border: #2a2a2a;
 }
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
-
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+  @apply bg-[#0a0a0a] text-gray-100;
+  color-scheme: dark;
 }

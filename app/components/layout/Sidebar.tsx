@@ -28,7 +28,7 @@ export function Sidebar() {
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+          className="p-2 rounded-md text-gray-300 hover:bg-[#1a1a1a]"
         >
           {mobileMenuOpen ? (
             <X className="h-6 w-6" />
@@ -42,7 +42,7 @@ export function Sidebar() {
       <aside
         className={`fixed top-0 left-0 z-40 h-screen transition-transform ${
           mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800`}
+        } lg:translate-x-0 w-64 bg-[#121212] border-r border-[#2a2a2a]`}
       >
         <div className="h-full px-3 py-2 overflow-y-auto">
           <div className="flex justify-center lg:justify-start">
@@ -65,8 +65,8 @@ export function Sidebar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                     isActive
-                      ? "bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300"
-                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                      ? "bg-[#1a1a1a] text-[#76b900] border-l-2 border-[#76b900]"
+                      : "text-gray-300 hover:bg-[#1a1a1a] hover:text-gray-100"
                   }`}
                 >
                   <Icon className="mr-3 h-5 w-5" />
@@ -81,7 +81,7 @@ export function Sidebar() {
       {/* Overlay for mobile */}
       {mobileMenuOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-30"
+          className="lg:hidden fixed inset-0 bg-black/70 z-30"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}

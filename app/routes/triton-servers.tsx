@@ -263,7 +263,7 @@ export default function TritonServers() {
         return (
           <Link
             to={`/triton-servers/${server.id}`}
-            className="text-blue-600 hover:underline dark:text-blue-400 font-medium"
+                className="text-[#76b900] hover:underline hover:text-[#9dd100] font-medium"
           >
             {server.name}
           </Link>
@@ -283,7 +283,7 @@ export default function TritonServers() {
               className={`w-3 h-3 rounded-full ${getStatusColor(status)}`}
               title={getStatusLabel(status)}
             />
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+            <span className="text-sm text-gray-400">
               {getStatusLabel(status)}
             </span>
           </div>
@@ -308,7 +308,7 @@ export default function TritonServers() {
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:underline dark:text-blue-400 text-sm"
+                className="text-[#76b900] hover:underline hover:text-[#9dd100] text-sm"
               >
                 {item.label}: {item.url}
               </a>
@@ -375,10 +375,10 @@ export default function TritonServers() {
         {/* Page Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-3xl font-bold text-gray-100">
               Triton Servers
             </h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-400">
+            <p className="mt-2 text-gray-400">
               Manage your Triton inference servers.
             </p>
           </div>
@@ -390,8 +390,8 @@ export default function TritonServers() {
 
         {/* Create/Edit Form */}
         {showForm && (
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+          <div className="bg-[#121212] rounded-lg shadow-sm border border-[#2a2a2a] p-6">
+            <h2 className="text-xl font-semibold mb-4 text-gray-100">
               {editingServer ? "Edit Server" : "Add New Server"}
             </h2>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -404,14 +404,14 @@ export default function TritonServers() {
                   required
                 />
                 {errors.name && (
-                  <p className="text-sm text-red-600 dark:text-red-400">
+                  <p className="text-sm text-red-400">
                     {errors.name.message}
                   </p>
                 )}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="http_url">HTTP Service URL <span className="text-red-600">*</span></Label>
+                  <Label htmlFor="http_url">HTTP Service URL <span className="text-red-400">*</span></Label>
                   <Input
                     id="http_url"
                     {...register("http_url")}
@@ -419,13 +419,13 @@ export default function TritonServers() {
                     required
                   />
                   {errors.http_url && (
-                    <p className="text-sm text-red-600 dark:text-red-400">
+                    <p className="text-sm text-red-400">
                       {errors.http_url.message}
                     </p>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="grpc_inference_url">GRPC Service URL <span className="text-red-600">*</span></Label>
+                  <Label htmlFor="grpc_inference_url">GRPC Service URL <span className="text-red-400">*</span></Label>
                   <Input
                     id="grpc_inference_url"
                     {...register("grpc_inference_url")}
@@ -433,13 +433,13 @@ export default function TritonServers() {
                     required
                   />
                   {errors.grpc_inference_url && (
-                    <p className="text-sm text-red-600 dark:text-red-400">
+                    <p className="text-sm text-red-400">
                       {errors.grpc_inference_url.message}
                     </p>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="metrics_url">Metrics Service URL <span className="text-red-600">*</span></Label>
+                  <Label htmlFor="metrics_url">Metrics Service URL <span className="text-red-400">*</span></Label>
                   <Input
                     id="metrics_url"
                     {...register("metrics_url")}
@@ -447,19 +447,19 @@ export default function TritonServers() {
                     required
                   />
                   {errors.metrics_url && (
-                    <p className="text-sm text-red-600 dark:text-red-400">
+                    <p className="text-sm text-red-400">
                       {errors.metrics_url.message}
                     </p>
                   )}
                 </div>
               </div>
               {fetcher.data && !fetcher.data.success && (
-                <p className="text-sm text-red-600 dark:text-red-400">
+                <p className="text-sm text-red-400">
                   {fetcher.data.error}
                 </p>
               )}
               {fetcher.data && fetcher.data.success && (
-                <p className="text-sm text-green-600 dark:text-green-400">
+                <p className="text-sm text-[#76b900]">
                   {fetcher.data.message}
                 </p>
               )}
@@ -487,7 +487,7 @@ export default function TritonServers() {
         {/* Search and Filters */}
         <div className="flex items-center gap-4">
           <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
             <Input
               placeholder="Search servers..."
               value={
@@ -502,7 +502,7 @@ export default function TritonServers() {
         </div>
 
         {/* Table */}
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800">
+        <div className="bg-[#121212] rounded-lg shadow-sm border border-[#2a2a2a]">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -553,7 +553,7 @@ export default function TritonServers() {
 
         {/* Pagination */}
         <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-600 dark:text-gray-400">
+          <div className="text-sm text-gray-400">
             Showing{" "}
             {table.getState().pagination.pageIndex *
               table.getState().pagination.pageSize +

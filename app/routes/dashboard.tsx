@@ -25,32 +25,32 @@ const stats = [
     value: "12,345",
     change: "+12.5%",
     icon: Users,
-    color: "text-blue-600",
-    bgColor: "bg-blue-100 dark:bg-blue-900/30",
+    color: "text-blue-400",
+    bgColor: "bg-blue-900/30",
   },
   {
     name: "Revenue",
     value: "$45,231",
     change: "+8.2%",
     icon: DollarSign,
-    color: "text-green-600",
-    bgColor: "bg-green-100 dark:bg-green-900/30",
+    color: "text-[#76b900]",
+    bgColor: "bg-[#76b900]/20",
   },
   {
     name: "Orders",
     value: "1,234",
     change: "+5.3%",
     icon: ShoppingCart,
-    color: "text-purple-600",
-    bgColor: "bg-purple-100 dark:bg-purple-900/30",
+    color: "text-purple-400",
+    bgColor: "bg-purple-900/30",
   },
   {
     name: "Growth",
     value: "23.4%",
     change: "+2.1%",
     icon: TrendingUp,
-    color: "text-orange-600",
-    bgColor: "bg-orange-100 dark:bg-orange-900/30",
+    color: "text-orange-400",
+    bgColor: "bg-orange-900/30",
   },
 ];
 
@@ -76,10 +76,10 @@ export default function Dashboard() {
       <div className="space-y-6">
         {/* Page Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-gray-100">
             Dashboard
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-gray-400">
             Welcome back! Here's what's happening with your business today.
           </p>
         </div>
@@ -91,17 +91,17 @@ export default function Dashboard() {
             return (
               <div
                 key={stat.name}
-                className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6"
+                className="bg-[#121212] rounded-lg shadow-sm border border-[#2a2a2a] p-6"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    <p className="text-sm font-medium text-gray-400">
                       {stat.name}
                     </p>
-                    <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="mt-2 text-2xl font-bold text-gray-100">
                       {stat.value}
                     </p>
-                    <p className="mt-1 text-sm text-green-600 dark:text-green-400">
+                    <p className="mt-1 text-sm text-[#76b900]">
                       {stat.change} from last month
                     </p>
                   </div>
@@ -119,21 +119,21 @@ export default function Dashboard() {
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Line Chart */}
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <div className="bg-[#121212] rounded-lg shadow-sm border border-[#2a2a2a] p-6">
+            <h2 className="text-lg font-semibold text-gray-100 mb-4">
               User Growth
             </h2>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
+                <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
+                <XAxis dataKey="name" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
+                <Tooltip contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #2a2a2a', color: '#f3f4f6' }} />
+                <Legend wrapperStyle={{ color: '#9ca3af' }} />
                 <Line
                   type="monotone"
                   dataKey="users"
-                  stroke="#3b82f6"
+                  stroke="#76b900"
                   strokeWidth={2}
                 />
               </LineChart>
@@ -141,18 +141,18 @@ export default function Dashboard() {
           </div>
 
           {/* Bar Chart */}
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <div className="bg-[#121212] rounded-lg shadow-sm border border-[#2a2a2a] p-6">
+            <h2 className="text-lg font-semibold text-gray-100 mb-4">
               Revenue Overview
             </h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="revenue" fill="#10b981" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
+                <XAxis dataKey="name" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
+                <Tooltip contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #2a2a2a', color: '#f3f4f6' }} />
+                <Legend wrapperStyle={{ color: '#9ca3af' }} />
+                <Bar dataKey="revenue" fill="#76b900" />
               </BarChart>
             </ResponsiveContainer>
           </div>

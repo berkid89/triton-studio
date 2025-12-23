@@ -10,7 +10,7 @@ export type ServerStatus = 'connecting' | 'ready' | 'not-ready';
 export function getStatusColor(status: ServerStatus): string {
   switch (status) {
     case 'ready':
-      return 'bg-green-500';
+      return 'bg-[#76b900]';
     case 'not-ready':
       return 'bg-red-500';
     case 'connecting':
@@ -90,7 +90,7 @@ export function getServerUrls(server: {
 export function getModelStateColor(state: string): string {
   const upperState = state.toUpperCase();
   if (upperState === "READY") {
-    return 'bg-green-500';
+    return 'bg-[#76b900]';
   } else if (upperState === "UNAVAILABLE") {
     return 'bg-red-500';
   } else {
