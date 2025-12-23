@@ -1,5 +1,5 @@
 import type { TritonServer } from "./triton-server.server";
-import type { Model, ModelInfo } from "~/types";
+import type { Model, ModelInfo, ModelStatsResponse } from "~/types";
 
 export class TritonApiService {
   private server: TritonServer;
@@ -77,9 +77,12 @@ export class TritonApiService {
     }
   }
 
-  async getModelInfo(modelName: string): Promise<ModelInfo> {
+  async getModelInfo(modelName: string, version?: string): Promise<ModelInfo> {
     try {
-      const response = await this.request("GET", this.server.http_url, `/v2/models/${modelName}`);
+      const endpoint = version 
+        ? `/v2/models/${modelName}/versions/${version}/config`
+        : `/v2/models/${modelName}/config`;
+      const response = await this.request("GET", this.server.http_url, endpoint);
       if (!response.ok) {
         throw new Error(`Failed to fetch model info: ${response.statusText}`);
       }
@@ -87,6 +90,23 @@ export class TritonApiService {
       return data as ModelInfo;
     } catch (error) {
       console.error("Error fetching model info:", error);
+      throw error;
+    }
+  }
+
+  async getModelStats(modelName: string, version?: string): Promise<ModelStatsResponse> {
+    try {
+      const endpoint = version 
+        ? `/v2/models/${modelName}/versions/${version}/stats`
+        : `/v2/models/${modelName}/stats`;
+      const response = await this.request("GET", this.server.http_url, endpoint);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch model stats: ${response.statusText}`);
+      }
+      const data = await response.json();
+      return data as ModelStatsResponse;
+    } catch (error) {
+      console.error("Error fetching model stats:", error);
       throw error;
     }
   }

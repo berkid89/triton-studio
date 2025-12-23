@@ -3,9 +3,9 @@ import { DashboardLayout } from "../components/layout/DashboardLayout";
 import { getTritonServerById, type TritonServer } from "~/lib/triton-server.server";
 import { Link, useLoaderData } from "react-router";
 import { getStatusColor, getStatusLabel, getInitialServerStatus, checkServerStatus, formatDate, getModelStateColor, getModelStateLabel, type ServerStatus } from "~/lib/utils";
-import { ArrowLeft, ExternalLink, Loader2 } from "lucide-react";
+import { ArrowLeft, ExternalLink, Loader2, RefreshCw } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { TritonApiService } from "~/lib/triton-api.service";
 import type { Model } from "~/types";
 import {
@@ -53,40 +53,48 @@ export default function TritonServerDetail() {
   );
   const [models, setModels] = useState<Model[]>([]);
   const [modelsLoading, setModelsLoading] = useState(false);
+  const [statusLoading, setStatusLoading] = useState(false);
   const [modelsError, setModelsError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const checkStatus = async () => {
+  const refreshStatus = useCallback(async () => {
+    setStatusLoading(true);
+    try {
       const status = await checkServerStatus(server, true);
       setServerStatus(status);
-    };
-
-    checkStatus();
+    } catch (error) {
+      console.error("Failed to check server status:", error);
+    } finally {
+      setStatusLoading(false);
+    }
   }, [server]);
 
-  useEffect(() => {
-    const fetchModels = async () => {
-      if (!server.http_url || serverStatus !== 'ready') {
-        return;
-      }
+  const fetchModels = useCallback(async () => {
+    if (!server.http_url || serverStatus !== 'ready') {
+      return;
+    }
 
-      setModelsLoading(true);
-      setModelsError(null);
-      
-      try {
-        const apiService = new TritonApiService(server, true);
-        const modelList = await apiService.getModelList();
-        setModels(modelList);
-      } catch (error) {
-        console.error("Failed to fetch models:", error);
-        setModelsError(error instanceof Error ? error.message : "Failed to load models");
-      } finally {
-        setModelsLoading(false);
-      }
-    };
-
-    fetchModels();
+    setModelsLoading(true);
+    setModelsError(null);
+    
+    try {
+      const apiService = new TritonApiService(server, true);
+      const modelList = await apiService.getModelList();
+      setModels(modelList);
+    } catch (error) {
+      console.error("Failed to fetch models:", error);
+      setModelsError(error instanceof Error ? error.message : "Failed to load models");
+    } finally {
+      setModelsLoading(false);
+    }
   }, [server, serverStatus]);
+
+  useEffect(() => {
+    refreshStatus();
+  }, [refreshStatus]);
+
+  useEffect(() => {
+    fetchModels();
+  }, [fetchModels]);
 
   return (
     <DashboardLayout>
@@ -113,6 +121,26 @@ export default function TritonServerDetail() {
 
         {/* Server Details Card */}
         <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Server Details
+              </h2>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Server information and status
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={refreshStatus}
+              disabled={statusLoading}
+              className="ml-4"
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${statusLoading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Status */}
             <div>
@@ -251,6 +279,16 @@ export default function TritonServerDetail() {
                 List of models available on this server
               </p>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={fetchModels}
+              disabled={modelsLoading || serverStatus !== 'ready'}
+              className="ml-4"
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${modelsLoading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
           </div>
 
           {modelsLoading ? (
@@ -291,7 +329,7 @@ export default function TritonServerDetail() {
                   <TableRow key={`${model.name}-${model.version}-${index}`}>
                     <TableCell className="font-medium text-gray-900 dark:text-white">
                       <Link
-                        to={`/triton-servers/${server.id}/models/${encodeURIComponent(model.name)}`}
+                        to={`/triton-servers/${server.id}/models/${encodeURIComponent(model.name)}/${encodeURIComponent(model.version)}`}
                         className="text-blue-600 hover:underline dark:text-blue-400"
                       >
                         {model.name}
