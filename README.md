@@ -119,50 +119,6 @@ The production build will be available in the `build/` directory.
 
 ---
 
-## Project Structure
-
-```
-triton-studio/
-├── app/
-│   ├── components/          # React components
-│   │   ├── layout/         # Layout components (Header, Sidebar, DashboardLayout)
-│   │   ├── ui/            # Reusable UI components (Button, Input, Table, etc.)
-│   │   ├── InferenceForm.tsx
-│   │   ├── InferencePanel.tsx
-│   │   ├── ModelInfoCard.tsx
-│   │   └── ModelStatsCard.tsx
-│   ├── lib/                # Business logic and utilities
-│   │   ├── triton-api.service.ts      # Triton API client
-│   │   ├── triton-server.server.ts    # Server CRUD operations
-│   │   └── utils.ts                   # Utility functions
-│   ├── routes/             # React Router routes
-│   │   ├── dashboard.tsx              # Dashboard page
-│   │   ├── triton-servers.tsx         # Server list page
-│   │   ├── triton-servers.$id.tsx     # Server detail page
-│   │   └── triton-servers.$id.models.$modelName.$version.tsx  # Model detail page
-│   ├── types/              # TypeScript type definitions
-│   ├── db.server.ts        # Database initialization
-│   └── root.tsx            # Root layout component
-├── package.json
-└── README.md
-```
-
----
-
-## Technology Stack
-
-- **Framework**: [React Router v7](https://reactrouter.com/) - Full-stack React framework with server-side rendering
-- **Language**: [TypeScript](https://www.typescriptlang.org/) - Type-safe development
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- **UI Components**: [Radix UI](https://www.radix-ui.com/) - Accessible component primitives
-- **Forms**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) - Form validation
-- **Tables**: [TanStack Table](https://tanstack.com/table) - Powerful table/data grid
-- **Charts**: [Recharts](https://recharts.org/) - Composable charting library
-- **Database**: [better-sqlite3](https://github.com/WiseLibs/better-sqlite3) - Fast SQLite database
-- **Icons**: [Lucide React](https://lucide.dev/) - Beautiful icon library
-
----
-
 ## Usage
 
 ### Adding a Triton Server
@@ -225,7 +181,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
 ---
 
