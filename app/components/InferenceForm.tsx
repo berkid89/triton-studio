@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
-import { Loader2 } from "lucide-react";
+import { Input } from "~/components/ui/input";
+import { Loader2, Plus, Minus } from "lucide-react";
 import { TritonApiService } from "~/lib/triton-api.service";
 import type { ModelInferenceInfo } from "~/types";
 import type { TritonServer } from "~/lib/triton-server.server";
@@ -15,6 +16,8 @@ interface InferenceFormProps {
   version: string;
 }
 
+type InputMode = "json" | "guided";
+
 export function InferenceForm({
   modelInferenceInfo,
   server,
@@ -22,7 +25,9 @@ export function InferenceForm({
   modelName,
   version,
 }: InferenceFormProps) {
+  const [inputMode, setInputMode] = useState<InputMode>("guided");
   const [inferenceInputs, setInferenceInputs] = useState<Record<string, string>>({});
+  const [guidedInputs, setGuidedInputs] = useState<Record<string, any>>({});
   const [inferenceResult, setInferenceResult] = useState<any>(null);
   const [inferenceLoading, setInferenceLoading] = useState(false);
   const [inferenceError, setInferenceError] = useState<string | null>(null);
@@ -31,10 +36,35 @@ export function InferenceForm({
   useEffect(() => {
     if (modelInferenceInfo && modelInferenceInfo.inputs) {
       const initialInputs: Record<string, string> = {};
+      const initialGuidedInputs: Record<string, any> = {};
       modelInferenceInfo.inputs.forEach((input) => {
         initialInputs[input.name] = "";
+        // Initialize guided inputs based on shape
+        if (input.shape && input.shape.length > 0) {
+          const totalElements = input.shape.reduce((a, b) => (a === -1 || b === -1 ? 1 : a * b), 1);
+          if (totalElements > 0 && totalElements < 1000) {
+            // Only initialize guided inputs for reasonable sizes
+            if (input.shape.length === 1) {
+              // 1D array
+              initialGuidedInputs[input.name] = Array(input.shape[0] === -1 ? 1 : input.shape[0]).fill("");
+            } else if (input.shape.length === 2) {
+              // 2D array
+              const rows = input.shape[0] === -1 ? 1 : input.shape[0];
+              const cols = input.shape[1] === -1 ? 1 : input.shape[1];
+              initialGuidedInputs[input.name] = Array(rows).fill(null).map(() => Array(cols).fill(""));
+            } else {
+              // Higher dimensions or dynamic - use empty string to fallback to JSON
+              initialGuidedInputs[input.name] = "";
+            }
+          } else {
+            initialGuidedInputs[input.name] = "";
+          }
+        } else {
+          initialGuidedInputs[input.name] = "";
+        }
       });
       setInferenceInputs(initialInputs);
+      setGuidedInputs(initialGuidedInputs);
     }
   }, [modelInferenceInfo]);
 
@@ -49,6 +79,31 @@ export function InferenceForm({
       }
     }
     return result;
+  };
+
+  // Convert guided input structure to flat array
+  const convertGuidedInputToArray = (guidedValue: any, dataType: string): any[] => {
+    if (typeof guidedValue === "string") {
+      return parseInputValue(guidedValue, dataType);
+    }
+    
+    if (Array.isArray(guidedValue)) {
+      const flattened = flattenArray(guidedValue);
+      if (dataType.startsWith("INT")) {
+        return flattened.map((v) => {
+          const num = typeof v === "string" ? parseInt(v, 10) : v;
+          return isNaN(num) ? 0 : num;
+        });
+      } else if (dataType.startsWith("FP") || dataType === "FP64") {
+        return flattened.map((v) => {
+          const num = typeof v === "string" ? parseFloat(v) : v;
+          return isNaN(num) ? 0 : num;
+        });
+      }
+      return flattened;
+    }
+    
+    return [];
   };
 
   const parseInputValue = (value: string, dataType: string): any[] => {
@@ -122,16 +177,30 @@ export function InferenceForm({
       // Build inputs array based on ModelInferenceInfo
       const inputs = modelInferenceInfo.inputs
         .filter((input) => {
-          const value = inferenceInputs[input.name];
-          // All inputs are required (ModelInferenceInfo doesn't have optional field)
-          if (!value || !value.trim()) {
-            throw new Error(`Input '${input.name}' is required`);
+          if (inputMode === "guided") {
+            const guidedValue = guidedInputs[input.name];
+            if (guidedValue === undefined || guidedValue === null || 
+                (typeof guidedValue === "string" && !guidedValue.trim()) ||
+                (Array.isArray(guidedValue) && guidedValue.length === 0)) {
+              throw new Error(`Input '${input.name}' is required`);
+            }
+          } else {
+            const value = inferenceInputs[input.name];
+            if (!value || !value.trim()) {
+              throw new Error(`Input '${input.name}' is required`);
+            }
           }
           return true;
         })
         .map((input) => {
-          const value = inferenceInputs[input.name];
-          const data = parseInputValue(value, input.datatype);
+          let data: any[];
+          if (inputMode === "guided") {
+            const guidedValue = guidedInputs[input.name];
+            data = convertGuidedInputToArray(guidedValue, input.datatype);
+          } else {
+            const value = inferenceInputs[input.name];
+            data = parseInputValue(value, input.datatype);
+          }
           
           // Ensure data is always a flat array
           const flatData = Array.isArray(data) ? data : [data];
@@ -198,7 +267,7 @@ export function InferenceForm({
     } finally {
       setInferenceLoading(false);
     }
-  }, [modelInferenceInfo, server, serverStatus, modelName, version, inferenceInputs]);
+  }, [modelInferenceInfo, server, serverStatus, modelName, version, inferenceInputs, guidedInputs, inputMode]);
 
   if (!modelInferenceInfo) {
     return (
@@ -220,6 +289,223 @@ export function InferenceForm({
     );
   }
 
+  // Render guided input field based on shape and type
+  const renderGuidedInput = (input: { name: string; datatype: string; shape: number[] }) => {
+    const guidedValue = guidedInputs[input.name];
+    
+    // If guided value is a string, it means we should fallback to JSON input
+    if (typeof guidedValue === "string") {
+      return (
+        <textarea
+          id={input.name}
+          value={guidedValue}
+          onChange={(e) =>
+            setGuidedInputs({
+              ...guidedInputs,
+              [input.name]: e.target.value,
+            })
+          }
+          placeholder={
+            input.datatype === "BYTES"
+              ? "Enter text (will be base64 encoded)"
+              : input.datatype.startsWith("INT") || input.datatype.startsWith("FP")
+              ? "Enter comma-separated numbers or JSON array, e.g., [1, 2, 3] or 1, 2, 3"
+              : "Enter value or JSON array"
+          }
+          className="flex min-h-[80px] w-full rounded-md border border-[#2a2a2a] bg-[#121212] px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#76b900] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a] disabled:cursor-not-allowed disabled:opacity-50 font-mono"
+          rows={3}
+        />
+      );
+    }
+
+    // Handle BYTES type
+    if (input.datatype === "BYTES") {
+      return (
+        <Input
+          id={input.name}
+          type="text"
+          value={guidedValue || ""}
+          onChange={(e) =>
+            setGuidedInputs({
+              ...guidedInputs,
+              [input.name]: e.target.value,
+            })
+          }
+          placeholder="Enter text (will be base64 encoded)"
+          className="font-mono"
+        />
+      );
+    }
+
+    // Handle 1D arrays
+    if (Array.isArray(guidedValue) && guidedValue.length > 0 && !Array.isArray(guidedValue[0])) {
+      const isDynamic = input.shape.length === 0 || input.shape[0] === -1;
+      
+      return (
+        <div className="space-y-2">
+          <div className="grid grid-cols-4 gap-2">
+            {guidedValue.map((_, index) => (
+              <div key={index} className="space-y-1">
+                <Label htmlFor={`${input.name}-${index}`} className="text-xs text-gray-500">
+                  [{index}]
+                </Label>
+                <Input
+                  id={`${input.name}-${index}`}
+                  type={input.datatype.startsWith("INT") ? "number" : input.datatype.startsWith("FP") ? "number" : "text"}
+                  step={input.datatype.startsWith("FP") ? "any" : undefined}
+                  value={guidedValue[index] || ""}
+                  onChange={(e) => {
+                    const newValue = [...guidedValue];
+                    newValue[index] = e.target.value;
+                    setGuidedInputs({
+                      ...guidedInputs,
+                      [input.name]: newValue,
+                    });
+                  }}
+                  className="font-mono text-sm"
+                />
+              </div>
+            ))}
+          </div>
+          {isDynamic && (
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const newValue = [...guidedValue, ""];
+                  setGuidedInputs({
+                    ...guidedInputs,
+                    [input.name]: newValue,
+                  });
+                }}
+                className="h-8"
+              >
+                <Plus className="h-3 w-3 mr-1" />
+                Add Element
+              </Button>
+              {guidedValue.length > 1 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const newValue = guidedValue.slice(0, -1);
+                    setGuidedInputs({
+                      ...guidedInputs,
+                      [input.name]: newValue,
+                    });
+                  }}
+                  className="h-8"
+                >
+                  <Minus className="h-3 w-3 mr-1" />
+                  Remove Last
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Handle 2D arrays
+    if (Array.isArray(guidedValue) && guidedValue.length > 0 && Array.isArray(guidedValue[0])) {
+      const isDynamicRows = input.shape.length === 0 || input.shape[0] === -1;
+      const numCols = input.shape.length > 1 && input.shape[1] !== -1 ? input.shape[1] : (guidedValue[0]?.length || 1);
+      
+      return (
+        <div className="space-y-3">
+          {guidedValue.map((row, rowIndex) => (
+            <div key={rowIndex} className="space-y-1">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs text-gray-500">Row {rowIndex}</Label>
+                {isDynamicRows && guidedValue.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      const newValue = guidedValue.filter((_: any, idx: number) => idx !== rowIndex);
+                      setGuidedInputs({
+                        ...guidedInputs,
+                        [input.name]: newValue,
+                      });
+                    }}
+                    className="h-6 px-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                  >
+                    <Minus className="h-3 w-3" />
+                  </Button>
+                )}
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {row.map((_: any, colIndex: number) => (
+                  <Input
+                    key={colIndex}
+                    id={`${input.name}-${rowIndex}-${colIndex}`}
+                    type={input.datatype.startsWith("INT") ? "number" : input.datatype.startsWith("FP") ? "number" : "text"}
+                    step={input.datatype.startsWith("FP") ? "any" : undefined}
+                    value={row[colIndex] || ""}
+                    onChange={(e) => {
+                      const newValue = guidedValue.map((r: any[], rIdx: number) => 
+                        rIdx === rowIndex 
+                          ? r.map((c: any, cIdx: number) => cIdx === colIndex ? e.target.value : c)
+                          : r
+                      );
+                      setGuidedInputs({
+                        ...guidedInputs,
+                        [input.name]: newValue,
+                      });
+                    }}
+                    className="font-mono text-sm"
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+          {isDynamicRows && (
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const newRow = Array(numCols).fill("");
+                  const newValue = [...guidedValue, newRow];
+                  setGuidedInputs({
+                    ...guidedInputs,
+                    [input.name]: newValue,
+                  });
+                }}
+                className="h-8"
+              >
+                <Plus className="h-3 w-3 mr-1" />
+                Add Row
+              </Button>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Fallback to textarea
+    return (
+      <textarea
+        id={input.name}
+        value={typeof guidedValue === "string" ? guidedValue : ""}
+        onChange={(e) =>
+          setGuidedInputs({
+            ...guidedInputs,
+            [input.name]: e.target.value,
+          })
+        }
+        placeholder="Enter JSON array or comma-separated values"
+        className="flex min-h-[80px] w-full rounded-md border border-[#2a2a2a] bg-[#121212] px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#76b900] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a] disabled:cursor-not-allowed disabled:opacity-50 font-mono"
+        rows={3}
+      />
+    );
+  };
+
   return (
     <div className="space-y-6">
       {serverStatus !== 'ready' && (
@@ -229,6 +515,38 @@ export function InferenceForm({
           </p>
         </div>
       )}
+      
+      {/* Input Mode Toggle */}
+      <div className="flex items-center justify-between p-3 bg-[#1a1a1a] rounded-lg border border-[#2a2a2a]">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-gray-300">Input Mode:</span>
+          <div className="flex gap-1 bg-[#121212] p-1 rounded-md border border-[#2a2a2a]">
+            <Button
+              type="button"
+              variant={inputMode === "guided" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setInputMode("guided")}
+              className="h-7 px-3 text-xs"
+            >
+              Guided Form
+            </Button>
+            <Button
+              type="button"
+              variant={inputMode === "json" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setInputMode("json")}
+              className="h-7 px-3 text-xs"
+            >
+              JSON
+            </Button>
+          </div>
+        </div>
+        <p className="text-xs text-gray-500">
+          {inputMode === "guided" 
+            ? "Structured inputs based on model input shapes" 
+            : "Free-form JSON input"}
+        </p>
+      </div>
       
       {/* Inference Form */}
       <form
@@ -248,25 +566,29 @@ export function InferenceForm({
                 {input.shape && input.shape.length > 0 && `, shape: [${input.shape.join(", ")}]`})
               </span>
             </Label>
-            <textarea
-              id={input.name}
-              value={inferenceInputs[input.name] || ""}
-              onChange={(e) =>
-                setInferenceInputs({
-                  ...inferenceInputs,
-                  [input.name]: e.target.value,
-                })
-              }
-              placeholder={
-                input.datatype === "BYTES"
-                  ? "Enter text (will be base64 encoded)"
-                  : input.datatype.startsWith("INT") || input.datatype.startsWith("FP")
-                  ? "Enter comma-separated numbers or JSON array, e.g., [1, 2, 3] or 1, 2, 3"
-                  : "Enter value or JSON array"
-              }
-              className="flex min-h-[80px] w-full rounded-md border border-[#2a2a2a] bg-[#121212] px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#76b900] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a] disabled:cursor-not-allowed disabled:opacity-50 font-mono"
-              rows={3}
-            />
+            {inputMode === "guided" ? (
+              renderGuidedInput(input)
+            ) : (
+              <textarea
+                id={input.name}
+                value={inferenceInputs[input.name] || ""}
+                onChange={(e) =>
+                  setInferenceInputs({
+                    ...inferenceInputs,
+                    [input.name]: e.target.value,
+                  })
+                }
+                placeholder={
+                  input.datatype === "BYTES"
+                    ? "Enter text (will be base64 encoded)"
+                    : input.datatype.startsWith("INT") || input.datatype.startsWith("FP")
+                    ? "Enter comma-separated numbers or JSON array, e.g., [1, 2, 3] or 1, 2, 3"
+                    : "Enter value or JSON array"
+                }
+                className="flex min-h-[80px] w-full rounded-md border border-[#2a2a2a] bg-[#121212] px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#76b900] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a] disabled:cursor-not-allowed disabled:opacity-50 font-mono"
+                rows={3}
+              />
+            )}
           </div>
         ))}
 
