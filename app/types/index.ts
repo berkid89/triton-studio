@@ -126,3 +126,19 @@ export interface ModelStatsResponse {
   model_stats: ModelStats[];
 }
 
+export interface ModelInferenceInfo {
+  name: string;
+  versions: string[];
+  platform: string;
+  inputs: Array<{
+    name: string;
+    datatype: string;
+    shape: number[];
+  }>;
+  outputs: Array<{
+    name: string;
+    datatype: string;
+    shape: number[];
+  }>;
+}
+

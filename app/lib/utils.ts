@@ -112,3 +112,23 @@ export function getModelStateLabel(state: string): string {
   }
 }
 
+/**
+ * Format nanoseconds to a human-readable string
+ */
+export function formatNanoseconds(ns: number): string {
+  if (ns === 0) return "0 ns";
+  if (ns < 1000) return `${ns} ns`;
+  if (ns < 1_000_000) return `${(ns / 1000).toFixed(2)} μs`;
+  if (ns < 1_000_000_000) return `${(ns / 1_000_000).toFixed(2)} ms`;
+  return `${(ns / 1_000_000_000).toFixed(2)} s`;
+}
+
+/**
+ * Format a Unix timestamp to a localized string
+ */
+export function formatTimestamp(timestamp: number): string {
+  if (timestamp === 0) return "Never";
+  const date = new Date(timestamp * 1000);
+  return date.toLocaleString();
+}
+
