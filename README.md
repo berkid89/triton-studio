@@ -64,13 +64,6 @@ Use Triton Studio for:
 - **Health Checks**: Automatic health monitoring with manual refresh options
 - **Error Reporting**: Comprehensive error messages and troubleshooting hints
 
-### 🎨 User Experience
-- **Modern Dark UI**: Beautiful, developer-friendly dark theme
-- **Responsive Design**: Works seamlessly on desktop and tablet devices
-- **Fast Navigation**: Intuitive routing and navigation between servers and models
-- **Loading States**: Clear feedback during async operations
-- **Empty States**: Helpful messages when no data is available
-
 ---
 
 ## Getting Started
