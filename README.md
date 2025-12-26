@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="public/assets/logo.png" alt="Triton Studio Logo" width="200"/>
+</div>
+
 # Triton Studio
 
 **A modern web-based management interface for NVIDIA Triton Inference Server.**
