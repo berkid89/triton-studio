@@ -141,6 +141,24 @@ npm start
 
 The production build will be available in the `build/` directory.
 
+### Running with Docker
+
+```bash
+docker run -d -p 3000:3000 --name triton-studio berkid89/triton-studio:latest
+```
+
+Access the application at `http://localhost:3000`.
+
+To access local Triton Inference Servers running on your host machine:
+
+**Linux:**
+```bash
+docker run -d -p 3000:3000 --network host --name triton-studio berkid89/triton-studio:latest
+```
+
+**Windows:**
+Use `host.docker.internal` as the hostname when adding Triton servers in the application (e.g., `http://host.docker.internal:8000`), or use your machine's IP address.
+
 ---
 
 ## Development

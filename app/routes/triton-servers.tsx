@@ -443,7 +443,7 @@ export default function TritonServers() {
                   <Input
                     id="metrics_url"
                     {...register("metrics_url")}
-                    placeholder="http://example.com:8002/metrics"
+                    placeholder="http://example.com:8002"
                     required
                   />
                   {errors.metrics_url && (
