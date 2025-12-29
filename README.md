@@ -88,8 +88,6 @@ We're continuously working to enhance Triton Studio with new capabilities. Here'
 ### 🔄 Automation & Integration
 - **Model Deployment Automation**: Automated workflows for model deployment and version management
 - **Webhooks & Notifications**: Configurable webhooks for server status changes and inference events
-- **Export/Import Configurations**: Backup and restore server configurations, including bulk import/export capabilities
-- **REST API**: Full REST API for programmatic access to all Triton Studio features
 
 ### 🧩 Advanced Features
 - **Model Version Comparison**: Side-by-side comparison of model versions, configurations, and performance metrics
