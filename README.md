@@ -4,9 +4,9 @@
 
 # Triton Studio
 
-**A modern web-based management interface for NVIDIA Triton Inference Server.**
+**A web-based control plane for NVIDIA Triton Inference Servers.**
 
-Triton Studio provides a comprehensive, user-friendly dashboard for managing Triton Inference Servers, exploring models, and testing inference endpoints. Built with modern web technologies, it simplifies the workflow of ML engineers and developers working with production inference deployments.
+Triton Studio provides a comprehensive, user-friendly dashboard for managing Triton Inference Servers, exploring models, and testing inference endpoints. It simplifies the workflow of ML engineers and developers working with production inference deployments.
 
 ---
 
@@ -24,12 +24,6 @@ Use Triton Studio for:
 
 * **Real-time Monitoring**. Monitor server health status, view model statistics, and track inference performance metrics. Get instant visibility into your inference infrastructure.
 
-* **Developer-Friendly Interface**. Built with modern React and TypeScript, featuring a beautiful dark UI optimized for developer workflows. Fast, responsive, and accessible.
-
-* **Production-Ready Architecture**. Built on React Router v7 with server-side rendering, type-safe APIs, and robust error handling. Deploy with confidence using battle-tested patterns.
-
-* **CORS-Free API Access**. Built-in proxy server eliminates CORS issues when connecting to Triton servers, making it easy to work with servers across different domains.
-
 ---
 
 ## Features
@@ -38,8 +32,6 @@ Use Triton Studio for:
 - **Multi-Server Support**: Manage multiple Triton Inference Servers from a single dashboard
 - **Health Monitoring**: Real-time server status checks (ready/live/not-ready)
 - **Service URL Management**: Configure HTTP, gRPC, and metrics endpoints
-- **Server CRUD Operations**: Create, read, update, and delete server configurations
-- **Persistent Storage**: SQLite database for reliable server configuration storage
 
 ### 🤖 Model Management
 - **Model Discovery**: Browse all models across your servers
@@ -49,8 +41,7 @@ Use Triton Studio for:
   - Version policies
   - Instance group configurations
   - Optimization settings
-- **Model Statistics**: Monitor inference counts, latency metrics, and performance statistics
-- **Model State Tracking**: Visual indicators for model states (ready, loading, unavailable)
+  - Model statistics
 
 ### 🧪 Inference Testing
 - **Guided Input Forms**: Intelligent form builder that adapts to model input shapes
@@ -67,6 +58,44 @@ Use Triton Studio for:
 - **Model Statistics**: View inference counts, success/failure rates, and latency metrics
 - **Health Checks**: Automatic health monitoring with manual refresh options
 - **Error Reporting**: Comprehensive error messages and troubleshooting hints
+
+---
+
+## Planned Features
+
+We're continuously working to enhance Triton Studio with new capabilities. Here's what's coming next:
+
+### 🗄️ Database & Infrastructure
+- **External Database Support**: Support for PostgreSQL, MySQL, and other production-grade databases beyond SQLite, enabling better scalability and multi-instance deployments
+- **Database Migrations**: Automated schema migration tools for seamless database upgrades
+
+### 📤 File Upload & Media Support
+- **File Upload for Inference**: Direct file upload support for inference requests, including:
+  - Image files (PNG, JPEG, WebP) for computer vision models
+  - Audio files (WAV, MP3, FLAC) for speech and audio processing models
+  - Automatic file encoding and preprocessing for model compatibility
+- **Batch File Processing**: Upload and process multiple files in a single inference request
+
+### 📈 Enhanced Dashboard & Analytics
+- **Advanced Dashboard**: Comprehensive analytics dashboard with:
+  - Historical performance trends and metrics visualization
+  - Model usage statistics and heatmaps
+  - Server resource utilization monitoring
+  - Customizable dashboard widgets
+- **Inference History**: Track and review past inference requests with search and filtering capabilities
+- **Performance Benchmarking**: Automated performance testing tools to compare model versions and configurations
+
+### 🔄 Automation & Integration
+- **Model Deployment Automation**: Automated workflows for model deployment and version management
+- **Webhooks & Notifications**: Configurable webhooks for server status changes and inference events
+- **Export/Import Configurations**: Backup and restore server configurations, including bulk import/export capabilities
+- **REST API**: Full REST API for programmatic access to all Triton Studio features
+
+### 🧩 Advanced Features
+- **Model Version Comparison**: Side-by-side comparison of model versions, configurations, and performance metrics
+- **Batch Inference Support**: Native support for batch inference requests with optimized processing
+- **Custom Metrics Integration**: Integration with external monitoring systems (Prometheus, Grafana, etc.)
+- **Model Registry Integration**: Connect with ML model registries for seamless model discovery and deployment
 
 ---
 
@@ -186,6 +215,14 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 - Built for the [NVIDIA Triton Inference Server](https://github.com/triton-inference-server/server) community
 - Inspired by the need for better developer tooling in ML inference workflows
+
+---
+
+## Disclaimer
+
+Triton Studio is an independent, open-source project.
+It is not affiliated with, endorsed by, or sponsored by NVIDIA.
+NVIDIA and Triton are trademarks of NVIDIA Corporation.
 
 ---
 

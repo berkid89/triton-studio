@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router";
 import {
-  LayoutDashboard,
   Menu,
   X,
   Server
@@ -14,8 +13,7 @@ interface NavItem {
 }
 
 const navigation: NavItem[] = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Triton Servers", href: "/triton-servers", icon: Server },
+  { name: "Triton Servers", href: "/", icon: Server },
 ];
 
 export function Sidebar() {
