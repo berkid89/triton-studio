@@ -143,36 +143,6 @@ The production build will be available in the `build/` directory.
 
 ---
 
-## Usage
-
-### Adding a Triton Server
-
-1. Navigate to the **Triton Servers** page
-2. Click **Add Server**
-3. Fill in the server details:
-   - **Name**: A friendly name for your server
-   - **HTTP Service URL**: The HTTP endpoint (e.g., `http://localhost:8000`)
-   - **gRPC Service URL**: The gRPC endpoint (e.g., `grpc://localhost:8001`)
-   - **Metrics Service URL**: The metrics endpoint (e.g., `http://localhost:8002/metrics`)
-4. Click **Create**
-
-### Browsing Models
-
-1. Click on a server from the **Triton Servers** list
-2. View the list of models available on that server
-3. Click on a model to view detailed information
-
-### Testing Inference
-
-1. Navigate to a model's detail page
-2. Click the **Run Inference** button (or open the inference panel)
-3. Choose between **Guided Form** or **JSON** input mode
-4. Fill in the required inputs based on the model's schema
-5. Click **Run Inference** to execute the request
-6. View the results in the response panel
-
----
-
 ## Development
 
 ### Type Checking
