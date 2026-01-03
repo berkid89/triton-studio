@@ -10,6 +10,41 @@ Triton Studio provides a comprehensive, user-friendly dashboard for managing Tri
 
 ---
 
+## Quick Start with Docker
+
+The fastest way to get started with Triton Studio is using Docker:
+
+```bash
+docker run -d -p 3000:3000 --name triton-studio berkid89/triton-studio:latest
+```
+
+Access the application at `http://localhost:3000`.
+
+To access local Triton Inference Servers running on your host machine:
+
+**Linux:**
+```bash
+docker run -d -p 3000:3000 --network host --name triton-studio berkid89/triton-studio:latest
+```
+
+**Windows:**
+Use `host.docker.internal` as the hostname when adding Triton servers in the application (e.g., `http://host.docker.internal:8000`), or use your machine's IP address.
+
+---
+
+## Screenshots
+
+![Dashboard Overview](.github/screenshots/screenshot1.png)
+*Main dashboard showing server management and overview*
+
+![Model Details](.github/screenshots/screenshot2.png)
+*Model information and configuration view*
+
+![Inference Testing](.github/screenshots/screenshot3.png)
+*Interactive inference testing interface*
+
+---
+
 ## Why use Triton Studio?
 
 Triton Studio helps developers and ML engineers manage and interact with Triton Inference Servers through an intuitive web interface, eliminating the need for complex command-line tools or custom scripts.
@@ -140,24 +175,6 @@ npm start
 ```
 
 The production build will be available in the `build/` directory.
-
-### Running with Docker
-
-```bash
-docker run -d -p 3000:3000 --name triton-studio berkid89/triton-studio:latest
-```
-
-Access the application at `http://localhost:3000`.
-
-To access local Triton Inference Servers running on your host machine:
-
-**Linux:**
-```bash
-docker run -d -p 3000:3000 --network host --name triton-studio berkid89/triton-studio:latest
-```
-
-**Windows:**
-Use `host.docker.internal` as the hostname when adding Triton servers in the application (e.g., `http://host.docker.internal:8000`), or use your machine's IP address.
 
 ---
 
